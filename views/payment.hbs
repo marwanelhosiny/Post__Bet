@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <script src="https://banquemisr.gateway.mastercard.com/static/checkout/checkout.min.js"></script>
+    <script type="text/javascript">
+        
+          
+            Checkout.configure({
+                session: {
+                    id: "{{ sessionId }}"
+                }
+            });
+            Checkout.showPaymentPage();
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
+        {{!-- console.log("Reservation Date:", "{{ticketReservationDate}}");
+
+        var ticketCreatedAt = new Date("{{ticketReservationDate}}"); 
+
+        // Calculate the current time
+        var currentTime = new Date();
+
+        // Calculate the time elapsed in milliseconds
+        var timeElapsed = currentTime - ticketCreatedAt;
+
+        // Calculate the time limit for expiration (10 minutes in milliseconds)
+        var tenMinutes = 10 * 60 * 1000;
+
+        // Check if the ticket was created within the last 10 minutes
+        if (timeElapsed <= tenMinutes) {
+            //ticket is valid 
+        } else {
+            // The ticket has expired
+            alert("Ticket has expired. Please create a new ticket.");
+        } --}}
