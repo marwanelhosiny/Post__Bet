@@ -14,11 +14,10 @@ export enum PaymentStatus {
 @Entity()
 export class UserProgramSubscription extends OBaseEntity {
 
-
     @Column({ type: "enum", enum: PaymentStatus, default: PaymentStatus.Pending })
     status: PaymentStatus;
 
-    @Column({ type: 'float' })
+    @Column({ type: 'float', default: 0 })
     totalPrice: number;
 
     @Column({ type: 'float', default: 0 })
@@ -46,5 +45,5 @@ export class UserProgramSubscription extends OBaseEntity {
     session: string;
 
     @Column({ nullable: true })
-    userProgramUsedCounter: number;
+    programUsedCounter: number;
 }

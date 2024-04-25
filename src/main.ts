@@ -10,6 +10,8 @@ import { HttpExceptionFilter } from './shared/global-exception';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv';
 import helmet from 'helmet';
+import { ValidationExceptionFilter } from './shared/validation-exception.filter';
+
 
 dotenv.config();
 
@@ -21,7 +23,7 @@ async function bootstrap() {
   // app.use(helmet());
 
   app.use(morgan('dev'));
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new ValidationExceptionFilter());
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));

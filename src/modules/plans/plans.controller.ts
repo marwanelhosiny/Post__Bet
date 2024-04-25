@@ -4,10 +4,13 @@ import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
+import { UserGuard } from '../../guards/user.guard';
+import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 
 @ApiTags('Plans')
 @Controller('plans')
 export class PlansController {
+  postingService: any;
   constructor(private readonly plansService: PlansService) {}
 
   @Post()
@@ -33,5 +36,11 @@ export class PlansController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.plansService.remove(+id);
+  }
+
+  @UseGuards(UserGuard)
+  @Post('/subscribe')
+  makeSubscribtion(@Body() planSubscripeDto:PlanSubscripeDto, @Req() req){
+    return this.plansService.makeSubscription(planSubscripeDto, req)
   }
 }

@@ -1,6 +1,7 @@
 import { ApiHideProperty, ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import { User } from "../entities/user.entity";
 import { UserType } from "../enums/user-type.enum";
+import { IsEmail } from "class-validator";
 
 export class CreateUserDto {
 
@@ -43,6 +44,7 @@ export class SignUpDto {
     name: string;
 
     @ApiProperty()
+    @IsEmail()
     email: string;
 
     @ApiProperty()

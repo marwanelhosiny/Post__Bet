@@ -8,7 +8,7 @@ export class Promocode extends  OBaseEntity {
 
     @ApiProperty()
     @Column({ unique: true })
-    PromoCode?: string;
+    promoCode?: string;
 
     @ApiProperty()
     @Column({})

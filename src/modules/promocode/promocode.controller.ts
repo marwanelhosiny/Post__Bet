@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PromocodeService } from './promocode.service';
 import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
@@ -10,6 +10,7 @@ import { Admin_UserGuard } from '../../guards/admin-user.guard';
 export class PromocodeController {
   constructor(private readonly promocodeService: PromocodeService) {}
 
+  @UsePipes(ValidationPipe)
   @Post()
   create(@Body() createPromocodeDto: CreatePromocodeDto) {
     return this.promocodeService.create(createPromocodeDto);
@@ -26,6 +27,7 @@ export class PromocodeController {
     return this.promocodeService.findOne(+id);
   }
 
+  @UsePipes(ValidationPipe)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePromocodeDto: UpdatePromocodeDto) {
     return this.promocodeService.update(+id, updatePromocodeDto);

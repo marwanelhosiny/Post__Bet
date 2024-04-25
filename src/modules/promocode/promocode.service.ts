@@ -17,7 +17,7 @@ export class PromocodeService {
       await this.repo.save(createPromocodeDto);
       return "Promo Code created successfully";
     } catch (error) {
-      if (error instanceof QueryFailedError && error.message.includes('UQ_0a7f5406636c063ad71ac4b0aac')) {
+      if (error instanceof QueryFailedError && error.message.includes('UQ_b01497d884dc9a1782ec6b60b5')) {
         throw new HttpException('Promo code of this name already exists', HttpStatus.BAD_REQUEST);
       }
       throw error;
