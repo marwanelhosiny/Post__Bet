@@ -4,6 +4,7 @@ import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
 import { Promocode } from 'src/entities/promocode.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
+import { UserType } from 'src/enums/user-type.enum';
 
 @Injectable()
 export class PromocodeService {
@@ -23,8 +24,15 @@ export class PromocodeService {
     }
   }
 
-  async findAll() {
-    return await this.repo.find();
+  async findAll(req) {
+
+    if(req.user.userType == UserType.ADMIN) {
+      return await this.repo.find();
+    }
+
+    if(req.user.userType == UserType.USER) {
+      return await this.repo.find({where:{isActive: true}});
+    }
   }
 
   async findOne(id: number) {

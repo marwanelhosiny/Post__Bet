@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PromocodeService } from './promocode.service';
 import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
@@ -17,8 +17,8 @@ export class PromocodeController {
 
   @UseGuards(Admin_UserGuard)
   @Get()
-  findAll() {
-    return this.promocodeService.findAll();
+  findAll(@Req() req) {
+    return this.promocodeService.findAll(req);
   }
 
   @Get(':id')
