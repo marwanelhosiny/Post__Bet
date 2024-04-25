@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
-import { Plan } from 'src/entities/plan.entity';
+import { Plan } from '../../entities/plan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserType } from 'src/enums/user-type.enum';
 
 @Injectable()
 export class PlansService {
@@ -16,8 +17,13 @@ export class PlansService {
     return "Plan created successfully";
   }
 
-  async findAll() {
-    return await this.repo.find();
+  async findAll(req) {
+    if(req.user.userType == UserType.ADMIN) {
+      return await this.repo.find();
+    }
+    if(req.user.userType == UserType.USER) {
+      return await this.repo.find({where:{isActive: true}});
+    }  
   }
 
   async findOne(id: number) {

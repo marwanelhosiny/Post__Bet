@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
-import { User } from "src/entities/user.entity";
-import { UserType } from "src/enums/user-type.enum";
+import { User } from "../entities/user.entity";
+import { UserType } from "../enums/user-type.enum";
 
 export class CreateUserDto {
 

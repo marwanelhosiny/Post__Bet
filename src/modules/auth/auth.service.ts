@@ -12,13 +12,12 @@ import { CreateUserDto, JwtUser, LoginDto, LoginEmailDto, SignUpDto, verifyOtpDt
 import { UserService } from '../user/user.service';
 import { User } from '../../entities/user.entity';
 // import { OTPGenerator } from 'otp-generator';
-import { ChangePasswordDto } from 'src/dtos/change-password.dto';
+import { ChangePasswordDto } from '../../dtos/change-password.dto';
 import axios from 'axios';
-import { UserType } from 'src/enums/user-type.enum';
-import { SUtils } from 'src/shared/utils';
+import { UserType } from '../../enums/user-type.enum';
 import * as speakeasy from 'speakeasy';
 import { MailService } from '../mail/mail.service';
-import { ChangeForgetPasswordDto, VerifyOtpDto } from 'src/dtos/auth.dto';
+import { ChangeForgetPasswordDto, VerifyOtpDto } from '../../dtos/auth.dto';
 
 
 @Injectable()

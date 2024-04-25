@@ -17,6 +17,9 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
     number_of_posts: number;
 
     @ApiProperty()
+    isActive: boolean;
+
+    @ApiProperty()
     Facebook: boolean;
 
     @ApiProperty()

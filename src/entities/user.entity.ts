@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Entity, Column, OneToMany, UpdateDateColumn } from 'typeorm';
 import { OBaseEntity } from '../generic/base.entity';
 import { SUtils } from '../shared/utils';
-import { UserType } from 'src/enums/user-type.enum';
+import { UserType } from '../enums/user-type.enum';
 import { UserProgramSubscription } from './subscription.entity';
 
 @Entity()

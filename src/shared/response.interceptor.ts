@@ -5,7 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
-import { AbstractResponse } from 'src/dtos/response.dto';
+import { AbstractResponse } from '../dtos/response.dto';
 
 @Injectable()
 export class ResponseInterceptor<T>

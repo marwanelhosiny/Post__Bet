@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { SUtils } from '../../shared/utils';
-import { UserType } from 'src/enums/user-type.enum';
-import { AbstractService } from 'src/generic/abstract.service';
+import { UserType } from '../../enums/user-type.enum';
+import { AbstractService } from '../../generic/abstract.service';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { I18nContext } from 'nestjs-i18n';
 

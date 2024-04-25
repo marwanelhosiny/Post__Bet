@@ -1,10 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Entity, Column, OneToMany, UpdateDateColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { OBaseEntity } from '../generic/base.entity';
+import { UserProgramSubscription } from './subscription.entity';
 
 @Entity()
-export class Plan extends OBaseEntity{
-
+export class Plan extends OBaseEntity {
     @ApiProperty()
     @Column({ unique: false, nullable: true })
     name?: string;
@@ -22,35 +22,9 @@ export class Plan extends OBaseEntity{
     number_of_posts?: number;
 
     @ApiProperty()
-    @Column({ default: false })
-    Facebook?: boolean;
+    @Column({ default: true })
+    isActive?: boolean;
 
-    @ApiProperty()
-    @Column({ default: false })
-    Instagram?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    LinkedIn?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    Twitter?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    Telegram?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    TikTok?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    Pinterest?: boolean;
-
-    @ApiProperty()
-    @Column({ default: false })
-    Reddit?: boolean;
-
+    @OneToMany(() => UserProgramSubscription, userProgramSubscriptions => userProgramSubscriptions.plan)
+    userProgramSubscriptions?: UserProgramSubscription[];
 }

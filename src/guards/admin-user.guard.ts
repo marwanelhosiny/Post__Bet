@@ -1,6 +1,6 @@
 import { ExecutionContext, HttpException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
-import { User } from "src/entities/user.entity";
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class Admin_UserGuard extends JwtAuthGuard {

@@ -2,7 +2,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 import { Promocode } from './promocode.entity';
-import { OBaseEntity } from 'src/generic/base.entity';
+import { OBaseEntity } from '../generic/base.entity';
+import { Plan } from './plan.entity';
 
 
 export enum PaymentStatus {
@@ -31,6 +32,9 @@ export class UserProgramSubscription extends OBaseEntity {
 
     @ManyToOne(() => User, user => user.userProgramSubscriptions)
     user: User;
+
+    @ManyToOne(() => Plan, plan => plan.userProgramSubscriptions)
+    plan: Plan;
 
     @Column({ nullable: true })
     paymentId: string;

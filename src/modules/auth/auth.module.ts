@@ -5,8 +5,7 @@ import { JwtStrategy } from '../../guards/jwt.strategy';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule } from '@nestjs/config';
-import { jwtSecrets } from 'src/shared/constants';
+import { jwtSecrets } from '../../shared/constants';
 import { MailModule } from '../mail/mail.module';
 
 @Module({

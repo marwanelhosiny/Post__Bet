@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
-import { Observable } from "rxjs";
-import { User } from "src/entities/user.entity";
+import { User } from "../entities/user.entity";
 
 /// This Guard is to make sure that the same user who wants to make request
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { AddPostDto } from 'src/dtos/post.dto';
+import { AddPostDto } from '../../dtos/post.dto';
 
 @Injectable()
 export class PostingService {

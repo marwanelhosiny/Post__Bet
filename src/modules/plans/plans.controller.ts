@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Admin_UserGuard } from '../../guards/admin-user.guard';
 
 @ApiTags('Plans')
 @Controller('plans')
@@ -14,9 +15,9 @@ export class PlansController {
     return this.plansService.create(createPlanDto);
   }
 
-  @Get()
-  findAll() {
-    return this.plansService.findAll();
+  @UseGuards(Admin_UserGuard)@Get()
+  findAll(@Req() req) {
+    return this.plansService.findAll(req);
   }
 
   @Get(':id')

@@ -1,15 +1,11 @@
-import { UserService } from './../user/user.service';
 import { Body, Controller, Post, Req, UseGuards, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-//import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { LoginDto, LoginEmailDto, SignUpDto, verifyOtpDto } from '../../dtos/user.dto';
-import { Role } from '../../guards/roles.decorator';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { ChangePasswordDto } from 'src/dtos/change-password.dto';
+import { ChangePasswordDto } from '../../dtos/change-password.dto';
 import { MailService } from '../mail/mail.service';
-import { ChangeForgetPasswordDto, ForgetPasswordEmailDto, VerifyOtpDto } from 'src/dtos/auth.dto';
-import { UserGuard } from 'src/guards/user.guard';
+import { ChangeForgetPasswordDto, ForgetPasswordEmailDto, VerifyOtpDto } from '../../dtos/auth.dto';
+import { UserGuard } from '../../guards/user.guard';
 
 @ApiTags('Auth')
 @Controller('Auth')

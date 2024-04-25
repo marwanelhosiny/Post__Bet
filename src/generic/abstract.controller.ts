@@ -6,8 +6,7 @@ import { DeleteResult } from "typeorm";
 // import { JwtAuthGuard } from "../modules/guards/jwt-auth.guard";
 import { AbstractValidationPipe } from "./abstract-validation.pipe";
 import { AbstractService } from "./abstract.service";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { AdminGuard } from "src/guards/admin.guard";
+import { AdminGuard } from "../guards/admin.guard";
 
 
 

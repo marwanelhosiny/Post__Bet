@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { OBaseEntity } from "src/generic/base.entity";
+import { OBaseEntity } from "../generic/base.entity";
 import { Column, Entity } from "typeorm";
 
 

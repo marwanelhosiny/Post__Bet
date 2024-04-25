@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { join } from 'path';
 import { FileService } from './file.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 

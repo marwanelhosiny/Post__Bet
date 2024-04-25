@@ -1,9 +1,8 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { PostingService } from './posting.service';
-import { Admin_UserGuard } from 'src/guards/admin-user.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { AddPostDto } from 'src/dtos/post.dto';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { AddPostDto } from '../../dtos/post.dto';
 
 
 @ApiTags('Posting')

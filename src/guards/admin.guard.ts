@@ -1,8 +1,8 @@
 import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { Observable } from "rxjs";
-import { User } from "src/entities/user.entity";
-import { UserType } from "src/enums/user-type.enum";
+import { User } from "../entities/user.entity";
+import { UserType } from "../enums/user-type.enum";
 
 @Injectable()
 export class AdminGuard extends JwtAuthGuard {
