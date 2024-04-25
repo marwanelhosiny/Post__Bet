@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class VerifyOtpDto {
-    @ApiProperty()
-    email: string;
+    // @ApiProperty()
+    // email: string;
 
     @ApiProperty()
     otp: string;
@@ -19,5 +19,8 @@ export class ChangeForgetPasswordDto {
 export class ForgetPasswordEmailDto {
     @ApiProperty()
     gmail: string;
+
+    @ApiProperty()
+    email: string;
 }
 

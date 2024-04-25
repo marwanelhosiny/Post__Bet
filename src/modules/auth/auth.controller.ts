@@ -52,10 +52,9 @@ export class AuthController {
     return this.authService.changePassword(req, body);
   }
 
-  @UseGuards(UserGuard)
   @Post('forget-password')
-  async forget(@Body() body: ForgetPasswordEmailDto, @Req() req) {
-    await this.authService.sendOtp(body, true, req)
+  async forget(@Body() body: ForgetPasswordEmailDto) {
+    await this.authService.sendOtp(body, true)
   }
 
   @Post('verify-otp')

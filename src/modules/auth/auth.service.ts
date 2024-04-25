@@ -252,11 +252,11 @@ export class AuthService {
     
 
     async veriftOtp(body: VerifyOtpDto) {
-        let user = await User.findOne({ where: { email: body.email } })
+        let user = await User.findOne({ where: { otp: body.otp } })
 
-        if (user.otp != body.otp) {
-            throw new UnauthorizedException('Invalid otp')
-        }
+        // if (user.otp != body.otp) {
+        //     throw new UnauthorizedException('Invalid otp')
+        // }
 
         //TODO: CheckOTP with speakeasy package
 
@@ -264,11 +264,11 @@ export class AuthService {
         const timeDifference = Math.abs(now.getTime() - user.otpRequestDate.getTime()) / (1000 * 60);
 
         if (timeDifference > 60) {   //////// minutes
-            await User.update({ email: body.email }, { verifiedOtp: false, otp: null, otpRequestDate: null })
+            await User.update({ otp: body.otp }, { verifiedOtp: false, otp: null, otpRequestDate: null })
             throw new UnauthorizedException('OTP expired');
         }
 
-        await User.update({ email: body.email }, { verifiedOtp: true, otp: null, otpRequestDate: null })
+        await User.update({ otp: body.otp }, { verifiedOtp: true, otp: null, otpRequestDate: null })
 
         return true
 
@@ -295,7 +295,7 @@ export class AuthService {
         return user
     }
 
-    async sendOtp(email, forget: boolean = false, req) {
+    async sendOtp(body, forget: boolean = false) {
         // const userCheck = await User.findOne({ where: { email: email } })
         // if (!userCheck) {
         //     throw new NotFoundException('No User found by this email address')
@@ -308,12 +308,12 @@ export class AuthService {
             window: Math.floor(Math.random() * 15)
         });
         const now = new Date();
-        await User.update({ id: req.user.id }, { otp: otp, otpRequestDate: now, verifiedOtp: false, })
+        await User.update({ email: body.email }, { otp: otp, otpRequestDate: now, verifiedOtp: false, })
 
-        let user = await User.findOneBy({ id: req.user.id })
+        let user = await User.findOneBy({ email: body.email })
         if (forget) {
             await this.emailService.forgetPasswordMail(
-                email,
+                body.email,
                 otp
             )
         } else {
