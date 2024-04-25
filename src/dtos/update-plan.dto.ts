@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePlanDto } from './create-plan.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, Max, Min } from 'class-validator';
 
 export class UpdatePlanDto extends PartialType(CreatePlanDto) {
 
@@ -15,6 +16,12 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
 
     @ApiProperty()
     number_of_posts: number;
+    
+    @ApiProperty()
+    @IsInt()
+    @Min(0)
+    @Max(100)
+    vat: number;
 
     @ApiProperty()
     isActive: boolean;

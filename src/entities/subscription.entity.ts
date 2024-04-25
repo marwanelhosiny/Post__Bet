@@ -24,6 +24,9 @@ export class UserProgramSubscription extends OBaseEntity {
     discount: number;
 
     @Column({ type: 'float', default: 0 })
+    vatAmount: number;
+
+    @Column({ type: 'float', default: 0 })
     finalPrice: number;
 
     @ManyToOne(() => Promocode, { nullable: true })

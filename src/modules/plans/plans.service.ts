@@ -66,11 +66,13 @@ export class PlansService {
     }
   
     const discount = (promocode.percentage / 100) * plan.price;
-    const finalPrice = plan.price - discount;
+    const vatAmount =  (plan.vat / 100) * (plan.price - discount) 
+    const finalPrice = plan.price - discount + vatAmount;
   
     const subscription = new UserProgramSubscription();
     subscription.totalPrice = plan.price;
     subscription.discount = discount;
+    subscription.vatAmount = vatAmount;
     subscription.finalPrice = finalPrice;
     subscription.promocode = promocode;
     subscription.user = req.user;

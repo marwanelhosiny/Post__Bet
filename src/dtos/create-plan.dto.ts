@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsInt, Max, Min } from "class-validator";
 
 export class CreatePlanDto {
 
@@ -13,6 +14,12 @@ export class CreatePlanDto {
 
     @ApiProperty()
     number_of_posts: number;
+
+    @ApiProperty()
+    @IsInt()
+    @Min(0)
+    @Max(100)
+    vat: number;
 
     @ApiProperty()
     isActive: boolean;
