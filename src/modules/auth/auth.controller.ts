@@ -68,14 +68,13 @@ export class AuthController {
   }
 }
 
-///////////plans module
-///////////promocode module
+
 ///////////payment integration
 //////////ayshare integration
 //////////find way to post on snapchat
 //////////contact us message and respond
+///////// subscrib endpoint
 
 
 
 /////////// signup --->> add client token
-///////////forget user by email --->> remove token and add email

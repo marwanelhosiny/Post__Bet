@@ -60,6 +60,10 @@ export class UserService extends AbstractService<User> {
     }
   }
 
+  async findOne(id: number) {
+    return await this.userRepo.findOne({ where: { id } });
+  }
+
   // private async getOrCreateRole(roleDto: Role | number): Promise<Role> {
   //   if (typeof roleDto === 'number') {
   //     return this.roleService.findOneBy({ id: roleDto });
