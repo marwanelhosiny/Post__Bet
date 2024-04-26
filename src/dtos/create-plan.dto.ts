@@ -16,6 +16,9 @@ export class CreatePlanDto {
     number_of_posts: number;
 
     @ApiProperty()
+    limit_number_of_posts_per_day: number;
+
+    @ApiProperty()
     @IsInt()
     @Min(0)
     @Max(100)

@@ -3,6 +3,7 @@ import { PostingService } from './posting.service';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { AddPostDto } from '../../dtos/post.dto';
+import { UserGuard } from 'src/guards/user.guard';
 
 
 @ApiTags('Posting')
@@ -16,9 +17,9 @@ export class  PostingController {
     return this.postingService.createUserProfile(req);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserGuard)
   @Post('/post')
   addPost(@Body() addPostDto: AddPostDto, @Req() req){
-    return this.postingService.addPost(req.user.id, addPostDto);
+    return this.postingService.addPost(req, addPostDto);
   }
 }

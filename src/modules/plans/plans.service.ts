@@ -74,6 +74,7 @@ export class PlansService {
     subscription.discount = discount;
     subscription.vatAmount = vatAmount;
     subscription.finalPrice = finalPrice;
+    subscription.startDayPlanSubscribtion = new Date();
     subscription.promocode = promocode;
     subscription.user = req.user;
     subscription.plan = plan;

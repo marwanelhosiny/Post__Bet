@@ -16,7 +16,10 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
 
     @ApiProperty()
     number_of_posts: number;
-    
+
+    @ApiProperty()
+    limit_number_of_posts_per_day: number;
+
     @ApiProperty()
     @IsInt()
     @Min(0)

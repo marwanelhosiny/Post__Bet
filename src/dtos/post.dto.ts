@@ -1,19 +1,22 @@
-// add-post.dto.ts
-
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, ArrayNotEmpty } from 'class-validator';
+import { IsArray, ArrayNotEmpty, IsBoolean } from 'class-validator';
 
 export class AddPostDto {
 
     @ApiProperty()
-    @IsString()
     post: string;
 
     @ApiProperty({
-        items: {
-            type: 'string',
-            format: 'binary',
-        },
+        type: [{ platform: String, isSelected: Boolean }],
+        isArray: true,
+    })
+    @IsArray()
+    @ArrayNotEmpty()
+    platform: { platform: string, isSelected: boolean }[];
+
+    @ApiProperty({
+        type: 'string',
+        format: 'binary',
         required: true,
     })
     mediaUrls: string;

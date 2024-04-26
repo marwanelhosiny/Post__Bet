@@ -11,11 +11,14 @@ export enum PaymentStatus {
     Paid = 'Paid',
 }
 
+
+
+
 @Entity()
 export class UserProgramSubscription extends OBaseEntity {
-
+    
     @Column({ type: "enum", enum: PaymentStatus, default: PaymentStatus.Pending })
-    status: PaymentStatus;
+    paymentStatus: PaymentStatus;
 
     @Column({ type: 'float', default: 0 })
     totalPrice: number;
@@ -28,6 +31,12 @@ export class UserProgramSubscription extends OBaseEntity {
 
     @Column({ type: 'float', default: 0 })
     finalPrice: number;
+
+    @Column({nullable: true })
+    todayUsedProgramCounter: number;
+
+    @Column({ type: 'date' })
+    startDayPlanSubscribtion: Date;    
 
     @ManyToOne(() => Promocode, { nullable: true })
     promocode: Promocode;
@@ -47,6 +56,6 @@ export class UserProgramSubscription extends OBaseEntity {
     @Column({ nullable: true })
     session: string;
 
-    @Column({ nullable: true })
+    @Column({ default: 0 })
     programUsedCounter: number;
 }
