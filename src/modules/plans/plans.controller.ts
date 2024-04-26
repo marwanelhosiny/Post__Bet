@@ -18,7 +18,8 @@ export class PlansController {
     return this.plansService.create(createPlanDto);
   }
 
-  @UseGuards(Admin_UserGuard)@Get()
+  @UseGuards(Admin_UserGuard)
+  @Get()
   findAll(@Req() req) {
     return this.plansService.findAll(req);
   }

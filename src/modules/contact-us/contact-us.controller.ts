@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ContactUsService } from './contact-us.service';
 import { CreateContactUsDto } from '../../dtos/create-contact-us.dto';
 import { UpdateContactUsDto } from '../../dtos/update-contact-us.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Admin_UserGuard } from '../../guards/admin-user.guard';
 
 @ApiTags('Contact Us')
 @Controller('contact-us')
@@ -14,9 +15,10 @@ export class ContactUsController {
     return this.contactUsService.create(createContactUsDto);
   }
 
+  @UseGuards(Admin_UserGuard)
   @Get()
-  findAll() {
-    return this.contactUsService.findAll();
+  findAll(@Req() req) {
+    return this.contactUsService.findAll(req);
   }
 
   @Get(':id')

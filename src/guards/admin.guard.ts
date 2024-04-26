@@ -1,4 +1,4 @@
-import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { Observable } from "rxjs";
 import { User } from "../entities/user.entity";
@@ -17,6 +17,11 @@ export class AdminGuard extends JwtAuthGuard {
         const userFromRequest = request.user as User
         const userIdFromToken = userFromRequest.id
         const user = await User.findOne({ where: { id: userIdFromToken } })
+
+        if (!user) {
+            throw new HttpException('This User does not exist', HttpStatus.BAD_REQUEST);
+        }
+
         if (!(user.userType === UserType.ADMIN || user.userType === UserType.SELLER)) {
             throw new ForbiddenException()
         }

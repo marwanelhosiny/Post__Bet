@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreateContactUsDto } from '../../dtos/create-contact-us.dto';
 import { UpdateContactUsDto } from '../../dtos/update-contact-us.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ContactUs } from '../../entities/contact-us.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ContactUsService {
-  create(createContactUsDto: CreateContactUsDto) {
-    return 'This action adds a new contactUs';
+
+  constructor(
+    @InjectRepository(ContactUs) private readonly repo: Repository<ContactUs>,
+  ) { }
+
+
+  async create(createContactUsDto: CreateContactUsDto) {
+    await this.repo.save(createContactUsDto);
+    return "Contact Us send success";
   }
 
-  findAll() {
-    return `This action returns all contactUs`;
+
+  async findAll(req) {
+    return await this.repo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contactUs`;
+
+  async findOne(id: number) {
+    return await this.repo.findOne({ where: { id } });
   }
 
-  update(id: number, updateContactUsDto: UpdateContactUsDto) {
-    return `This action updates a #${id} contactUs`;
+
+  async update(id: number, updateContactUsDto: UpdateContactUsDto) {
+    await this.repo.update(id, updateContactUsDto);
+    return "Respond Sent Success";
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} contactUs`;
+  async remove(id: number) {
+    const entityToRemove = await this.repo.findOne({ where: { id } });
+    if (!entityToRemove) {
+      throw new Error('Entity not found');
+    }
+    await this.repo.remove(entityToRemove);
+    return 'Entity deleted successfully';
   }
 }

@@ -1,7 +1,8 @@
-import { ExecutionContext, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { Observable } from "rxjs";
 import { User } from "../entities/user.entity";
+import { UserType } from "src/enums/user-type.enum";
 
 @Injectable()
 export class UserGuard extends JwtAuthGuard {
@@ -9,18 +10,28 @@ export class UserGuard extends JwtAuthGuard {
         let isValidToken = await super.canActivate(context);
 
         if (!isValidToken) {
-            return false
+            return false;
         }
 
-        const request = context.switchToHttp().getRequest<any>()
-        const user = request.user as User
-        const userIdFromToken = user.id
-        const userCeheck = await User.findOne({ where: { id: userIdFromToken } })
-        if (userCeheck.suspended == true) {
-            throw new HttpException('User is suspended', 440)
-        }
+        const request = context.switchToHttp().getRequest<any>();
+        const user = request.user as User;
+        const userIdFromToken = user.id;
 
-        return true
+            const userCheck = await User.findOne({ where: { id: userIdFromToken } });
 
+            if (!userCheck) {
+                throw new HttpException('This User does not exist', HttpStatus.BAD_REQUEST);
+            }
+
+            if(!(userCheck.userType == UserType.USER)) {
+                throw new HttpException('Admin not authorized to do this action', HttpStatus.BAD_REQUEST);
+            }
+
+            if (userCheck.suspended) {
+                throw new HttpException('User is suspended', HttpStatus.FORBIDDEN);
+            }
+
+            return true;
+        
     }
 }

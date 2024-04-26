@@ -74,7 +74,6 @@ export class AuthController {
 //////////ayshare integration
 //////////find way to post on snapchat
 //////////contact us message and respond
-///////// subscrib endpoint
 
 
 

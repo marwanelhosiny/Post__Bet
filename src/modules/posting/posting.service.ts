@@ -33,6 +33,12 @@ export class PostingService {
     }
 
     async addPost(userId: number, addPostDto: AddPostDto) {
+
+
+        
+
+
+
         try {
             const API_KEY = ''; // Replace with your Ayrshare API key
             const url = 'https://app.ayrshare.com/api/post';
