@@ -63,7 +63,7 @@ export class User extends OBaseEntity {
 
     @ApiPropertyOptional()
     @UpdateDateColumn({ nullable: true })
-    lastOnlineTime?: Date;
+    lastLoginTime?: Date;
 
     @ApiPropertyOptional()
     @Column({ default: false })

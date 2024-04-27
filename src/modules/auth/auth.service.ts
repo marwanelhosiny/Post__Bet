@@ -100,7 +100,7 @@ export class AuthService {
         user.otp = null
         user.verifiedOtp = true
         user.otpRequestDate = null
-        // user.lastOnlineTime = new Date();
+        // user.lastLoginTime = new Date();
         await this.userService.update(user.id, user)
         const signedUser = this.sign(user);
         return signedUser;
@@ -116,7 +116,7 @@ export class AuthService {
             .getOne();
 
         if (!user) {
-            throw new UnauthorizedException('Check your credentials')
+            throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
         }
         if (user.suspended === true) {
             // CUstom Status Code for mobile
@@ -128,15 +128,15 @@ export class AuthService {
         // }
 
         if (user.password !== body.password) {
-            throw new UnauthorizedException("Check your credentials")
+            throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
         }
 
-        user.lastOnlineTime = new Date();
+        user.lastLoginTime = new Date();
         // Update user
         await this.userService.repository
             .createQueryBuilder()
             .update()
-            .set({ lastOnlineTime: user.lastOnlineTime })
+            .set({ lastLoginTime: user.lastLoginTime })
             .where('id = :id', { id: user.id })
             .execute();
 
