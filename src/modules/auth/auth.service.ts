@@ -155,7 +155,7 @@ export class AuthService {
             .getOne();
 
         if (isUserExist) {
-            throw new InternalServerErrorException("User already exists")
+            throw new HttpException('User of this Email is Already exist', HttpStatus.BAD_REQUEST)
         }
 
         let user = Object.assign(new User(), body)
