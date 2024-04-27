@@ -4,6 +4,7 @@ import { UpdateContactUsDto } from '../../dtos/update-contact-us.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContactUs } from '../../entities/contact-us.entity';
 import { Repository } from 'typeorm';
+import { UserType } from '../../enums/user-type.enum';
 
 @Injectable()
 export class ContactUsService {
@@ -13,14 +14,23 @@ export class ContactUsService {
   ) { }
 
 
-  async create(createContactUsDto: CreateContactUsDto) {
-    await this.repo.save(createContactUsDto);
+  async create(createContactUsDto: CreateContactUsDto, req) {
+    await this.repo.save({
+      message: createContactUsDto.message,
+      email: req.user.email,
+      phone: createContactUsDto.phone
+    });
     return "Contact Us send success";
   }
 
 
   async findAll(req) {
-    return await this.repo.find();
+    if (req.user.userType == UserType.ADMIN) {
+      return await this.repo.find();
+    }
+    if (req.user.userType == UserType.USER) {
+      return await this.repo.find({ where: { email: req.user.email } });
+    }
   }
 
 

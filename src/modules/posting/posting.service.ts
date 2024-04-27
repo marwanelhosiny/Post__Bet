@@ -47,6 +47,10 @@ export class PostingService {
             relations: ['plan']
         });
 
+        if (!subscription) {
+            throw new HttpException('User does not have an active subscription', HttpStatus.BAD_REQUEST);
+        }
+
         if (subscription.programUsedCounter >= subscription.plan.number_of_posts) {
             throw new HttpException('You have used all your Subscription', HttpStatus.BAD_REQUEST);
         }
@@ -55,10 +59,6 @@ export class PostingService {
             if (subscription.todayUsedProgramCounter >= subscription.plan.limit_number_of_posts_per_day) {
                 throw new HttpException('You have reached your daily posts limits', HttpStatus.BAD_REQUEST);
             }
-        }
-
-        if (!subscription) {
-            throw new HttpException('User does not have an active subscription', HttpStatus.BAD_REQUEST);
         }
 
         if (subscription.paymentStatus == PaymentStatus.Pending) {

@@ -8,10 +8,6 @@ export class ContactUs extends OBaseEntity {
 
     @ApiProperty()
     @Column()
-    name?: string;
-
-    @ApiProperty()
-    @Column()
     message?: string;
 
     @ApiProperty()

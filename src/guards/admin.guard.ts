@@ -23,7 +23,7 @@ export class AdminGuard extends JwtAuthGuard {
         }
 
         if (!(user.userType === UserType.ADMIN || user.userType === UserType.SELLER)) {
-            throw new ForbiddenException()
+            throw new HttpException('Admin only can perform this Action', HttpStatus.BAD_REQUEST);
         }
         if (user.isActive == false) {
             throw new UnauthorizedException('Admin is dactivated')
