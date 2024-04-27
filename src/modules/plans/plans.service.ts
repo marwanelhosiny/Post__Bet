@@ -12,6 +12,7 @@ import { Promocode } from 'src/entities/promocode.entity';
 @Injectable()
 export class PlansService {
 
+
   constructor(
     @InjectRepository(Plan) private readonly repo: Repository<Plan>,
   ) { }
@@ -49,26 +50,26 @@ export class PlansService {
   }
 
   async makeSubscription(planSubscripeDto: PlanSubscripeDto, req) {
-    const plan = await Plan.findOne({where:{ id: planSubscripeDto.planId }});
+    const plan = await Plan.findOne({ where: { id: planSubscripeDto.planId } });
     if (!plan) {
       throw new HttpException('No Plan By this Id', HttpStatus.BAD_REQUEST);
     }
     if (!plan.isActive) {
       throw new HttpException('This Plan is not Active', HttpStatus.BAD_REQUEST);
     }
-  
-    const promocode = await Promocode.findOne({where:{ promoCode: planSubscripeDto.promoCode }});
+
+    const promocode = await Promocode.findOne({ where: { promoCode: planSubscripeDto.promoCode } });
     if (!promocode) {
       throw new HttpException('This Promo code does not exist', HttpStatus.BAD_REQUEST);
     }
     if (!promocode.isActive) {
       throw new HttpException('This Promo code is not Active', HttpStatus.BAD_REQUEST);
     }
-  
+
     const discount = (promocode.percentage / 100) * plan.price;
-    const vatAmount =  (plan.vat / 100) * (plan.price - discount) 
+    const vatAmount = (plan.vat / 100) * (plan.price - discount)
     const finalPrice = plan.price - discount + vatAmount;
-  
+
     const subscription = new UserProgramSubscription();
     subscription.totalPrice = plan.price;
     subscription.discount = discount;
@@ -81,7 +82,39 @@ export class PlansService {
 
     await subscription.save();
   }
-  
 
-  //// make a cronejob to set used_counter equal zero everyday
+
+  async mySubscribtion(req: any) {
+    /////check to get only last which is not expired
+    // return await UserProgramSubscription.find({where: {user: req.user.id}})
+
+
+    const today = new Date();
+    
+
+    const userId = req.user.id;
+    return await UserProgramSubscription
+      .createQueryBuilder('subscription')
+      .leftJoin('subscription.plan', 'plan')
+      .leftJoin('subscription.user', 'user')
+      .where('subscription.user = :userId', { userId })
+      .orderBy('subscription.id', 'ASC')
+      .select('subscription.id')
+      .addSelect('subscription.startDayPlanSubscribtion')
+      .addSelect('subscription.planUsedCounter')
+      .addSelect('subscription.todayUsedPlanCounter')
+      .addSelect('plan.name')
+      .addSelect('plan.details')
+      .addSelect('plan.number_of_posts')
+      .addSelect('plan.limit_number_of_posts_per_day')
+      .addSelect('plan.Facebook')
+      .addSelect('plan.Instagram')
+      .addSelect('plan.LinkedIn')
+      .addSelect('plan.Twitter')
+      .addSelect('plan.Telegram')
+      .addSelect('plan.TikTok')
+      .addSelect('plan.Pinterest')
+      .addSelect('plan.Reddit')
+      .getMany()
+  }
 }

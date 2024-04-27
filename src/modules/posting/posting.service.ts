@@ -38,7 +38,6 @@ export class PostingService {
     }
 
     async addPost(req, addPostDto: AddPostDto) {
-        // check in request body platformms and if it supported by the user plan
 
         const userId = req.user.id;
         const subscription = await UserProgramSubscription.findOne({
@@ -51,12 +50,20 @@ export class PostingService {
             throw new HttpException('User does not have an active subscription', HttpStatus.BAD_REQUEST);
         }
 
-        if (subscription.programUsedCounter >= subscription.plan.number_of_posts) {
+        const today = new Date();
+        const thirtyDaysLater = new Date(subscription.startDayPlanSubscribtion);
+        thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+
+        if (today > thirtyDaysLater) {
+            throw new HttpException('Subscription is not active', HttpStatus.BAD_REQUEST);
+        }
+
+        if (subscription.planUsedCounter >= subscription.plan.number_of_posts) {
             throw new HttpException('You have used all your Subscription', HttpStatus.BAD_REQUEST);
         }
 
         if (!(subscription.plan.limit_number_of_posts_per_day == null)) {
-            if (subscription.todayUsedProgramCounter >= subscription.plan.limit_number_of_posts_per_day) {
+            if (subscription.todayUsedPlanCounter >= subscription.plan.limit_number_of_posts_per_day) {
                 throw new HttpException('You have reached your daily posts limits', HttpStatus.BAD_REQUEST);
             }
         }
@@ -77,8 +84,8 @@ export class PostingService {
 
         // const response = await this.postToAyrshare(addPostDto, userId);
 
-        subscription.programUsedCounter += 1;
-        subscription.todayUsedProgramCounter += 1;
+        subscription.planUsedCounter += 1;
+        subscription.todayUsedPlanCounter += 1;
         await subscription.save();
 
     }
@@ -111,8 +118,8 @@ export class PostingService {
 
     private scheduleCronJob() {
         cron.schedule('0 0 * * *', async () => {
-            await UserProgramSubscription.update({}, { todayUsedProgramCounter: 0 });
-            console.log('todayUsedProgramCounter reset to zero successfully.');
+            await UserProgramSubscription.update({}, { todayUsedPlanCounter: 0 });
+            console.log('todayUsedPlanCounter reset to zero successfully.');
 
         });
     }

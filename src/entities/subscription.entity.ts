@@ -33,7 +33,7 @@ export class UserProgramSubscription extends OBaseEntity {
     finalPrice: number;
 
     @Column({nullable: true })
-    todayUsedProgramCounter: number;
+    todayUsedPlanCounter: number;
 
     @Column({ type: 'date' })
     startDayPlanSubscribtion: Date;    
@@ -57,5 +57,5 @@ export class UserProgramSubscription extends OBaseEntity {
     session: string;
 
     @Column({ default: 0 })
-    programUsedCounter: number;
+    planUsedCounter: number;
 }

@@ -24,6 +24,12 @@ export class PlansController {
     return this.plansService.findAll(req);
   }
 
+  @UseGuards(UserGuard)
+  @Get('/my-subscribtion')
+  mySubscribtion( @Req() req){
+    return this.plansService.mySubscribtion(req)
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.plansService.findOne(+id);
@@ -44,4 +50,5 @@ export class PlansController {
   makeSubscribtion(@Body() planSubscripeDto:PlanSubscripeDto, @Req() req){
     return this.plansService.makeSubscription(planSubscripeDto, req)
   }
+
 }
