@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, UnauthorizedException } from '@nestjs/common';
 import { Response } from 'express';
 
 @Catch(HttpException)
@@ -14,6 +14,11 @@ export class ValidationExceptionFilter implements ExceptionFilter {
                 statusCode: status,
                 message: 'Validation failed',
                 errors: errors,
+            });
+        } else if (status === 401 && exception instanceof UnauthorizedException) {
+            response.status(status).json({
+                statusCode: status,
+                message: 'Unauthorized',
             });
         } else {
             response.status(status).json({

@@ -41,7 +41,7 @@ export class UserProgramSubscription extends OBaseEntity {
     @ManyToOne(() => Promocode, { nullable: true })
     promocode: Promocode;
 
-    @ManyToOne(() => User, user => user.userProgramSubscriptions)
+    @ManyToOne(() => User, user => user.userProgramSubscriptions, { onDelete: 'SET NULL' })
     user: User;
 
     @ManyToOne(() => Plan, plan => plan.userProgramSubscriptions)

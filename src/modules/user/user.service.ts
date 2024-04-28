@@ -80,7 +80,7 @@ export class UserService extends AbstractService<User> {
       },);
 
     if (!existsUser) {
-      throw new UnauthorizedException('Check your credintials');
+      throw new UnauthorizedException('Check your credentials');
     }
 
     //remove password from response

@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import * as cron from 'node-cron';
+import { UserGuard } from 'src/guards/user.guard';
 
 
 
@@ -48,7 +49,7 @@ export class UserController  {
     return await this.userService.updateUser(id, body)
   }
 
-  @UseGuards(Admin_UserGuard)
+  @UseGuards(UserGuard)
   @Delete(':id')
   async deleteOne(@Param('id') id: number) {
     // Schedule deletion after 14 days
