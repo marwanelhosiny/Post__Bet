@@ -26,26 +26,10 @@ export class AuthController {
     return this.authService.signUp(user);
   }
 
-  // @Post('/loginByPhone')
-  // async userLogin(@Body() user: LoginEmailDto) {
-  //   const loginResult = await this.authService.LoginByMobile(user);
-
-  //   return {
-  //     ...loginResult,
-  //   };
-  // }
-
-  // @Post('/verifyAccount')
-  // async verifyOtp(@Body() user: verifyOtpDto) {
-  //   return await this.authService.verifyAccountOnSignUp(user);
-  // }
-
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
-  // @Post('/loginByToken')
-  // public signInUsingToken(@Req() req) {
-  //   return this.authService.signInUsingToken(req.user)
-  // }
+  @Post('/verifyAccount')
+  async verifyOtp(@Body() user: verifyOtpDto) {
+    return await this.authService.verifyAccountOnSignUp(user);
+  }
 
   @UseGuards(UserGuard)
   @Post('change-password')

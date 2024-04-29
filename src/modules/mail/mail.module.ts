@@ -21,8 +21,9 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
           },
         },
         defaults: {
-          // from: `"UM-IN App" <${config.get('SMTP_USERNAME')}>`,
-          from: "Postbet App",
+          // from: `"Post-BetApp" <${config.get('SMTP_USERNAME')}>`,
+          from: `"Postbet App" <${config.get('SMTP_USERNAME')}>`,
+          // from: "Postbet App",
         },
         template: {
           dir: join(__dirname, 'templates'),

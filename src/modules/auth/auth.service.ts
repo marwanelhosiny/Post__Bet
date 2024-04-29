@@ -18,6 +18,7 @@ import { UserType } from '../../enums/user-type.enum';
 import * as speakeasy from 'speakeasy';
 import { MailService } from '../mail/mail.service';
 import { ChangeForgetPasswordDto, VerifyOtpDto } from '../../dtos/auth.dto';
+import { SUtils } from '../../shared/utils';
 
 
 @Injectable()
@@ -41,55 +42,20 @@ export class AuthService {
         };
     }
 
-
-    async LoginByMobile(user: LoginEmailDto) {
-        const userDb = await this.userService.sendOtp(user);
-        if (userDb.suspended == true) {
-            throw new UnauthorizedException('This User is Suspended')
-        }
-
-        if (userDb.userType != UserType.ADMIN) {
-            throw new UnauthorizedException('User only with user type user can login')
-        }
-
-        // if (userDb.haveAccount) {
-        //     const smsApiUrl = 'https://smsmisr.com/api/SMS/';
-        //     const smsApiParams = {
-        //         environment: 1,
-        //         username: '83ef9cf2675d7bca72ffd9666bfd7192522ec09239405181daa906699f4c54a5',
-        //         password: 'bea430dbb8b1aeffa362ecc2e6a85f77250d150d31a0f4016b46abed4d5e7fef',
-        //         language: 1,
-        //         sender: '43b36aed1e7d3fc32e7dd22ccf9fe943617c52fc7941853eb272577b66d797d8',
-        //         mobile: userDb.mobile,
-        //         message: `Welcome To um-in, your OTP is: ${userDb.otp}, please use it to login to your account`,
-        //     }
-
-        //     const response = await axios.post(smsApiUrl, null, {
-        //         params: smsApiParams
-        //     });
-        // }
-
-        return {
-            otp: '0', //////// To Be removed
-            haveAccount: userDb.haveAccount
-        }
-    }
-
-
     async verifyAccountOnSignUp(body: verifyOtpDto) {
         const user = await this.userService.findOneBy({ email: body.email });
 
         if (!user || user.otp !== body.otp) {
-            throw new HttpException('Invalid OTP', HttpStatus.UNAUTHORIZED);
+            throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
         }
         const now = new Date();
         const timeDifference = Math.abs(now.getTime() - user.otpRequestDate.getTime()) / (1000 * 60);
 
 
 
-        if (timeDifference > 1) {   //////// minutes
+        if (timeDifference > 5) {   //////// minutes
             await User.update({ email: body.email }, { verifiedOtp: false, otp: null, otpRequestDate: null })
-            throw new UnauthorizedException('OTP expired');
+            throw new HttpException('OTP expired', HttpStatus.BAD_REQUEST);
         }
 
         // Mark user as verified and save the record
@@ -165,69 +131,36 @@ export class AuthService {
         user.firstTime = true
 
         // Generate OTP
-        // let otp = SUtils.generateOtp(4)
+        let otp = SUtils.generateOtp(4)
 
-        // var otp = speakeasy.totp({
-        //     secret: process.env.optSecret,
-        //     encoding: "base32",
-        //     digits: 6,
-        //     step: 60,
-        //     window: 10
-        // });
+        otp = speakeasy.totp({
+            secret: process.env.optSecret,
+            encoding: "base32",
+            digits: 6,
+            step: 60,
+            window: 10
+        });
 
-        // user.otp = otp
-        // user.otpRequestDate = new Date()
+        user.otp = otp
+        user.otpRequestDate = new Date()
 
         let newUser = await this.userService.create(user)
 
-        // await this.sendOtp(newUser.email)
-        // // Send mail 
-        // await this.emailService.sendMail(newUser, "")
+        await this.emailService.sendMail(newUser)
 
-        return this.sign(newUser);
+        setTimeout(async () => {
+            const userToDelete = await User.findOne({ where: { email: body.email, firstTime: true } });
+            if (userToDelete) {
+                await User.remove(userToDelete);
+                console.log(`Deleted user ${userToDelete.email} due to incomplete signup`);
+            }
+        }, 6 * 60 * 1000); // 10 minutes
     }
-
 
     async checkEmailExists(email: string) {
         return { "exist": await this.userService.count({ email: email }) > 0 }
     }
 
-    // async AdminLogin(body: LoginDto) {
-    //     let userStored: User;
-
-    //     try {
-    //         userStored = await this.userService.findUser(body);
-    //         if (userStored.isActive == false) {
-    //             throw new UnauthorizedException('This Admin is not Active')
-    //         }
-    //         if (userStored.userType == UserType.User || userStored.userType == UserType.Organizer) {
-    //             throw new UnauthorizedException('Cannot login with user type user or organizer')
-    //         }
-
-    //     } catch (error) {
-    //         throw new UnauthorizedException(error.message, error.code);
-    //     }
-    //     return this.sign(userStored);
-    // }
-
-    async signInUsingToken(reqUser: JwtUser) {
-
-        // if (reqUser.macAddress) {
-        //     return {
-        //         ...reqUser,
-        //         token: this.requestToken(reqUser.macAddress)
-        //     }
-        // }
-        let user = reqUser.user;
-
-        this.userService.update(user.id, {
-            online: true,
-        })
-
-        if (!user) { throw new UnauthorizedException('invalid token'); }
-
-        return this.sign(user)
-    }
 
     async changePassword(req, body: ChangePasswordDto) {
         console.log(req.user.id);
@@ -248,8 +181,8 @@ export class AuthService {
             return this.sign(userStored);
         }
         throw new HttpException("Incorrect password", 500);
-    } 
-    
+    }
+
 
     async veriftOtp(body: VerifyOtpDto) {
         let user = await User.findOne({ where: { otp: body.otp } })
@@ -296,10 +229,10 @@ export class AuthService {
     }
 
     async sendOtp(body, forget: boolean = false) {
-        // const userCheck = await User.findOne({ where: { email: email } })
-        // if (!userCheck) {
-        //     throw new NotFoundException('No User found by this email address')
-        // }
+        const userCheck = await User.findOne({ where: { email: body.email } })
+        if (!userCheck) {
+            throw new NotFoundException('No User found by this email address')
+        }
         var otp = speakeasy.totp({
             secret: process.env.optSecret,
             encoding: "base32",
@@ -310,7 +243,7 @@ export class AuthService {
         const now = new Date();
         await User.update({ email: body.email }, { otp: otp, otpRequestDate: now, verifiedOtp: false, })
 
-        let user = await User.findOneBy({ email: body.email })
+        // let user = await User.findOneBy({ email: body.email })
         if (forget) {
             await this.emailService.forgetPasswordMail(
                 body.email,
@@ -318,7 +251,7 @@ export class AuthService {
             )
         } else {
             await this.emailService.sendMail(
-                user
+                userCheck
             )
         }
     }

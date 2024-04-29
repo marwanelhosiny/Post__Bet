@@ -18,9 +18,6 @@ export class ChangeForgetPasswordDto {
 
 export class ForgetPasswordEmailDto {
     @ApiProperty()
-    gmail: string;
-
-    @ApiProperty()
     email: string;
 }
 

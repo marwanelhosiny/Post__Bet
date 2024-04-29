@@ -79,4 +79,4 @@ export class User extends OBaseEntity {
 
     @OneToMany(() => UserProgramSubscription, userProgramSubscriptions => userProgramSubscriptions.user)
     userProgramSubscriptions?: UserProgramSubscription[];
-} 
+}
