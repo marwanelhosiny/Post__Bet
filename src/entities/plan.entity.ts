@@ -15,7 +15,7 @@ export class Plan extends OBaseEntity{
     details?: string;
 
     @ApiProperty()
-    @Column({ default: 0 })
+    @Column({ nullable: true })
     price?: number;
 
     @ApiProperty()
@@ -33,6 +33,10 @@ export class Plan extends OBaseEntity{
     @ApiProperty()
     @Column({ default: false })
     isActive?: boolean;
+
+    @ApiProperty()
+    @Column({ default: false })
+    isFree?: boolean;
 
     @ApiProperty()
     @Column({ default: false })

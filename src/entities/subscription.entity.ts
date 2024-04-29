@@ -8,11 +8,9 @@ import { Plan } from './plan.entity';
 
 export enum PaymentStatus {
     Pending = 'Pending',
+    Free = 'Free',
     Paid = 'Paid',
 }
-
-
-
 
 @Entity()
 export class UserProgramSubscription extends OBaseEntity {
@@ -20,7 +18,7 @@ export class UserProgramSubscription extends OBaseEntity {
     @Column({ type: "enum", enum: PaymentStatus, default: PaymentStatus.Pending })
     paymentStatus: PaymentStatus;
 
-    @Column({ type: 'float', default: 0 })
+    @Column({ nullable: true, default: 0})
     totalPrice: number;
 
     @Column({ type: 'float', default: 0 })

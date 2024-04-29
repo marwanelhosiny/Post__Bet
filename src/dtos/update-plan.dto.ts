@@ -30,6 +30,9 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
     isActive: boolean;
 
     @ApiProperty()
+    isFree: boolean;
+
+    @ApiProperty()
     Facebook: boolean;
 
     @ApiProperty()

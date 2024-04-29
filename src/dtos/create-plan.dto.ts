@@ -28,6 +28,9 @@ export class CreatePlanDto {
     isActive: boolean;
 
     @ApiProperty()
+    isFree: boolean;
+
+    @ApiProperty()
     Facebook: boolean;
 
     @ApiProperty()

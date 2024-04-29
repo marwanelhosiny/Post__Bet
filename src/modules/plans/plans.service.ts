@@ -5,7 +5,7 @@ import { Plan } from '../../entities/plan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
-import { UserProgramSubscription } from '../../entities/subscription.entity';
+import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { Promocode } from 'src/entities/promocode.entity';
 
@@ -58,15 +58,22 @@ export class PlansService {
       throw new HttpException('This Plan is not Active', HttpStatus.BAD_REQUEST);
     }
 
-    const promocode = await Promocode.findOne({ where: { promoCode: planSubscripeDto.promoCode } });
-    if (!promocode) {
-      throw new HttpException('This Promo code does not exist', HttpStatus.BAD_REQUEST);
-    }
-    if (!promocode.isActive) {
-      throw new HttpException('This Promo code is not Active', HttpStatus.BAD_REQUEST);
+    let promocode = null;
+    if (planSubscripeDto.promoCode) {
+      promocode = await Promocode.findOne({ where: { promoCode: planSubscripeDto.promoCode } });
+      if (!promocode) {
+        throw new HttpException('This Promo code does not exist', HttpStatus.BAD_REQUEST);
+      }
+      if (!promocode.isActive) {
+        throw new HttpException('This Promo code is not Active', HttpStatus.BAD_REQUEST);
+      }
     }
 
-    const discount = (promocode.percentage / 100) * plan.price;
+    let discount = 0;
+    if (promocode) {
+      discount = (promocode.percentage / 100) * plan.price;
+    }
+
     const vatAmount = (plan.vat / 100) * (plan.price - discount)
     const finalPrice = plan.price - discount + vatAmount;
 
@@ -79,19 +86,21 @@ export class PlansService {
     subscription.promocode = promocode;
     subscription.user = req.user;
     subscription.plan = plan;
-
+    if (plan.isFree) {
+      subscription.paymentStatus = PaymentStatus.Free;
+    }
     await subscription.save();
+
+    if (promocode) {
+      promocode.usedCounter++;
+      await promocode.save();
+    }
   }
 
 
+
   async mySubscribtion(req: any) {
-    /////check to get only last which is not expired
-    // return await UserProgramSubscription.find({where: {user: req.user.id}})
-
-
     const today = new Date();
-    
-
     const userId = req.user.id;
     return await UserProgramSubscription
       .createQueryBuilder('subscription')
