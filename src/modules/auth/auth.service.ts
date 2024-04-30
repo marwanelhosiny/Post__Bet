@@ -159,6 +159,8 @@ export class AuthService {
                 console.log(`Deleted user ${userToDelete.email} due to incomplete signup`);
             }
         }, 6 * 60 * 1000); // 10 minutes
+
+        return ('Check your mail')
     }
 
     async checkEmailExists(email: string) {
