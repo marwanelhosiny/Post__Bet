@@ -97,6 +97,10 @@ export class AuthService {
             throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
         }
 
+        if (user.firstTime == true) {
+            throw new HttpException('Verify Your Email First', HttpStatus.BAD_REQUEST)
+        }
+
         user.lastLoginTime = new Date();
         // Update user
         await this.userService.repository

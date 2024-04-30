@@ -4,12 +4,14 @@ import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @ApiTags('Promo Code')
 @Controller('promocode')
 export class PromocodeController {
   constructor(private readonly promocodeService: PromocodeService) {}
 
+  @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
   @Post()
   create(@Body() createPromocodeDto: CreatePromocodeDto) {
@@ -27,12 +29,14 @@ export class PromocodeController {
     return this.promocodeService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePromocodeDto: UpdatePromocodeDto) {
     return this.promocodeService.update(+id, updatePromocodeDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.promocodeService.remove(+id);
