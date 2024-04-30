@@ -51,7 +51,7 @@ export class PostingService {
         }
 
         const today = new Date();
-        const thirtyDaysLater = new Date(subscription.startDayPlanSubscribtion);
+        const thirtyDaysLater = new Date(subscription.startDayPlanSubscription);
         thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
 
         if (today > thirtyDaysLater) {
@@ -72,7 +72,7 @@ export class PostingService {
             throw new HttpException('The subscription is not paid yet', HttpStatus.BAD_REQUEST);
         }
 
-        const endDate = new Date(subscription.startDayPlanSubscribtion);
+        const endDate = new Date(subscription.startDayPlanSubscription);
         endDate.setDate(endDate.getDate() + 30);
 
         if (new Date() > endDate) {

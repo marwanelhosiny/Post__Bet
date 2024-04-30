@@ -82,7 +82,7 @@ export class PlansService {
     subscription.discount = discount;
     subscription.vatAmount = vatAmount;
     subscription.finalPrice = finalPrice;
-    subscription.startDayPlanSubscribtion = new Date();
+    subscription.startDayPlanSubscription = new Date();
     subscription.promocode = promocode;
     subscription.user = req.user;
     subscription.plan = plan;
@@ -109,7 +109,7 @@ export class PlansService {
       .where('subscription.user = :userId', { userId })
       .orderBy('subscription.id', 'ASC')
       .select('subscription.id')
-      .addSelect('subscription.startDayPlanSubscribtion')
+      .addSelect('subscription.startDayPlanSubscription')
       .addSelect('subscription.planUsedCounter')
       .addSelect('subscription.todayUsedPlanCounter')
       .addSelect('plan.name')

@@ -34,7 +34,7 @@ export class UserProgramSubscription extends OBaseEntity {
     todayUsedPlanCounter: number;
 
     @Column({ type: 'date' })
-    startDayPlanSubscribtion: Date;    
+    startDayPlanSubscription: Date;    
 
     @ManyToOne(() => Promocode, { nullable: true })
     promocode: Promocode;
