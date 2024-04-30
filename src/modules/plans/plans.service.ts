@@ -3,11 +3,12 @@ import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
 import { Plan } from '../../entities/plan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
 import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
-import { Promocode } from 'src/entities/promocode.entity';
+import { Promocode } from '../../entities/promocode.entity';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class PlansService {
@@ -22,12 +23,24 @@ export class PlansService {
     return "Plan created successfully";
   }
 
-  async findAll(req) {
-    if (req.user.userType == UserType.ADMIN) {
-      return await this.repo.find();
+  async findAll(req, page, pageSize, search) {
+    const options: IPaginationOptions = {
+      page: page,
+      limit: pageSize
+    };
+    let whereClause = {};
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        name: (search.length > 0) ? ILike(`%${search}%`) : undefined
+      };
     }
-    if (req.user.userType == UserType.USER) {
-      return await this.repo.find({ where: { isActive: true } });
+    if (req.user.userType === UserType.ADMIN) {
+      return paginate<Plan>(this.repo, options, { where: whereClause });
+    }
+    if (req.user.userType === UserType.USER) {
+      whereClause = { ...whereClause, isActive: true };
+      return paginate<Plan>(this.repo, options, { where: whereClause });
     }
   }
 

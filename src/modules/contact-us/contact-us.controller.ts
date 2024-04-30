@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { ContactUsService } from './contact-us.service';
 import { CreateContactUsDto } from '../../dtos/create-contact-us.dto';
 import { UpdateContactUsDto } from '../../dtos/update-contact-us.dto';
@@ -20,8 +20,12 @@ export class ContactUsController {
 
   @UseGuards(Admin_UserGuard)
   @Get()
-  findAll(@Req() req) {
-    return this.contactUsService.findAll(req);
+  findAll(
+    @Req() req,
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+    @Query('search') search: string) {
+    return this.contactUsService.findAll(req, page, pageSize, search);
   }
 
   // @UseGuards(Admin_UserGuard)

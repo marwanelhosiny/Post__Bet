@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
@@ -20,8 +20,12 @@ export class PlansController {
 
   @UseGuards(Admin_UserGuard)
   @Get()
-  findAll(@Req() req) {
-    return this.plansService.findAll(req);
+  findAll(
+    @Req() req,
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+    @Query('search') search: string) {
+    return this.plansService.findAll(req, page, pageSize, search);
   }
 
   @UseGuards(UserGuard)
