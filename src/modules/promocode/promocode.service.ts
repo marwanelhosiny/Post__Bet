@@ -3,8 +3,9 @@ import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
 import { Promocode } from '../../entities/promocode.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, QueryFailedError } from 'typeorm';
+import { Repository, QueryFailedError, Like } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
+import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class PromocodeService {
@@ -24,12 +25,28 @@ export class PromocodeService {
     }
   }
 
-  async findAll(req) {
-    if(req.user.userType == UserType.ADMIN) {
-      return await this.repo.find();
+  async findAll(req, page, pageSize, search) {
+    const options: IPaginationOptions = {
+      page: page,
+      limit: pageSize
+    };
+
+    let whereClause = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        promoCode: (search.length > 0) ? Like(`%${search}%`) : undefined
+      };
     }
-    if(req.user.userType == UserType.USER) {
-      return await this.repo.find({where:{isActive: true}});
+
+    if (req.user.userType === UserType.ADMIN) {
+      return paginate<Promocode>(this.repo, options, { where: whereClause });
+    }
+
+    if (req.user.userType === UserType.USER) {
+      whereClause = { ...whereClause, isActive: true };
+      return paginate<Promocode>(this.repo, options, { where: whereClause });
     }
   }
 
