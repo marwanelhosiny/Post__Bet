@@ -34,6 +34,11 @@ export class PlansController {
     return this.plansService.mySubscribtion(req)
   }
 
+  @Get(':chargeId')
+  confirmPayment(@Param('chargeId') chargeId: string) {
+    return this.plansService.confirmPayment(chargeId)
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.plansService.findOne(+id);
@@ -54,5 +59,8 @@ export class PlansController {
   makeSubscribtion(@Body() planSubscripeDto:PlanSubscripeDto, @Req() req){
     return this.plansService.makeSubscription(planSubscripeDto, req)
   }
+
+  
+
 
 }

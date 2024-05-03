@@ -9,9 +9,11 @@ import { PaymentStatus, UserProgramSubscription } from '../../entities/subscript
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { Promocode } from '../../entities/promocode.entity';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import axios from 'axios';
 
 @Injectable()
 export class PlansService {
+  
 
 
   constructor(
@@ -99,14 +101,118 @@ export class PlansService {
     subscription.promocode = promocode;
     subscription.user = req.user;
     subscription.plan = plan;
+
+    let transactionUrl: string;
+    let chargeId: string;
+
     if (plan.isFree) {
       subscription.paymentStatus = PaymentStatus.Free;
     }
-    await subscription.save();
 
     if (promocode) {
       promocode.usedCounter++;
       await promocode.save();
+    }
+
+    const chargeResponse = await this.createCharge(finalPrice, req.user);
+    transactionUrl = chargeResponse.transaction.url;
+    chargeId = chargeResponse.id;
+
+    subscription.transactionUrl = transactionUrl;
+    subscription.chargeId = chargeId;
+
+    await subscription.save();
+
+    return { transactionUrl, chargeId };
+  }
+
+  async createCharge(finalPrice, user) {
+    const data = {
+      amount: finalPrice,
+      currency: 'SAR',
+      customer_initiated: true,
+      threeDSecure: true,
+      save_card: false,
+      description: 'Test Description',
+      metadata: {
+        udf1: 'Metadata 1'
+      },
+      reference: {
+        transaction: 'txn_01',
+        order: 'ord_01'
+      },
+      receipt: {
+        email: true,
+        sms: true
+      },
+      customer: {
+        first_name: user.name,
+        middle_name: '',
+        last_name: '',
+        email: user.email,
+        // phone: {
+        //   country_code: 965,
+        //   number: 51234567
+        // }
+      },
+      merchant: {
+        id: process.env.MERCHANT_ID,
+      },
+      source: {
+        id: 'src_all'
+      },
+      post: {
+        url: 'https://www.google.com/'
+      },
+      redirect: {
+        url: 'https://www.google.com/'
+      }
+    };
+
+    const headers = {
+      Authorization: process.env.SK_TEST,
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
+
+    try {
+      const response = await axios.post('https://api.tap.company/v2/charges/', data, {
+        headers: headers
+      });
+      console.log('Charge request successful:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error making charge request:', error.message);
+      throw error;
+    }
+  }
+
+  async confirmPayment(chargeId: string): Promise<any> {
+    const headers = {
+      Authorization: process.env.SK_TEST,
+      Accept: 'application/json'
+    };
+
+    try {
+      const response = await axios.get(`https://api.tap.company/v2/charges/${chargeId}`, {
+        headers: headers
+      });
+
+      const responseData = response.data;
+
+      if (responseData && responseData.status === 'CAPTURED') {
+        console.log('Payment Done already');
+        await UserProgramSubscription.update({chargeId: chargeId}, {paymentStatus: PaymentStatus.Paid})
+      }
+
+      else if (responseData && responseData.status === 'INITIATED') {
+        console.log('Payment Still Pending');
+        await UserProgramSubscription.update({chargeId: chargeId}, {paymentStatus: PaymentStatus.Pending})
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
     }
   }
 

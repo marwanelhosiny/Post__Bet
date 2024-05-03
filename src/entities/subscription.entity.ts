@@ -46,13 +46,10 @@ export class UserProgramSubscription extends OBaseEntity {
     plan: Plan;
 
     @Column({ nullable: true })
-    paymentId: string;
+    chargeId: string;
 
     @Column({ nullable: true })
-    tranRef: string;
-
-    @Column({ nullable: true })
-    session: string;
+    transactionUrl: string;
 
     @Column({ default: 0 })
     planUsedCounter: number;
