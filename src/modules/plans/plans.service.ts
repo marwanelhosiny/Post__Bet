@@ -9,7 +9,7 @@ import { PaymentStatus, UserProgramSubscription } from '../../entities/subscript
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { Promocode } from '../../entities/promocode.entity';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 @Injectable()
 export class PlansService {
@@ -211,8 +211,13 @@ export class PlansService {
       }
 
       return response.data;
-    } catch (error) {
-      throw error;
+    } catch (error) {if (axios.isAxiosError(error)) {
+      const axiosError: AxiosError = error;
+      if (axiosError.response && axiosError.response.status === 400) {
+        throw new HttpException(`Invalid charge ID: ${chargeId}`, HttpStatus.BAD_REQUEST);
+      }
+    }
+    throw error;
     }
   }
 
