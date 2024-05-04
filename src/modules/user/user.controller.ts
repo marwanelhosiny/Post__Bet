@@ -5,8 +5,10 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import * as cron from 'node-cron';
-import { UserGuard } from 'src/guards/user.guard';
-import { AdminGuard } from 'src/guards/admin.guard';
+import { UserGuard } from '../../guards/user.guard';
+import { AdminGuard } from '../../guards/admin.guard';
+import { EnumValidationPipe } from '../../shared/enum-validation';
+import { UserType } from '../../enums/user-type.enum';
 
 
 
@@ -26,27 +28,27 @@ export class UserController  {
   //   return await this.userService.create(createUserDto);
   // }
 
-  //TODO: convert this query to Path param
-  // @Get('filterByType/')
-  // async filerByType(
-  //   @Query('type', new EnumValidationPipe(UserType)) type: string,
-  //   @Query('page') page: number,
-  //   @Query('pageSize') pageSize: number,
-  // ) {
-
-  //   return await this.userService.filterUsers(type, page, pageSize)
-
-  // }
-
-  // @UseGuards(AdminGuard)
+  @UseGuards(Admin_UserGuard)
   @Get()
-  findAll(
-    @Req() req,
+  async filerByType(
+    @Query('type', new EnumValidationPipe(UserType)) type: string,
     @Query('page') page: number,
     @Query('pageSize') pageSize: number,
-    @Query('search') search: string) {
-    return this.userService.findAll(req);
+  ) {
+
+    return await this.userService.filterUsers(type, page, pageSize)
+
   }
+
+  // // @UseGuards(AdminGuard)
+  // @Get()
+  // findAll(
+  //   @Req() req,
+  //   @Query('page') page: number,
+  //   @Query('pageSize') pageSize: number,
+  //   @Query('search') search: string) {
+  //   return this.userService.filterUsers(req);
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
