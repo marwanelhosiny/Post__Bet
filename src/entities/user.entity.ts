@@ -73,10 +73,6 @@ export class User extends OBaseEntity {
     @Column({ default: true })
     firstTime?: boolean;
 
-    @ApiProperty({ description: 'tempCode', readOnly: true })
-    @Column({ select: true, default: null })
-    tempCode?: string;
-
     @OneToMany(() => UserProgramSubscription, userProgramSubscriptions => userProgramSubscriptions.user)
     userProgramSubscriptions?: UserProgramSubscription[];
 }

@@ -43,9 +43,13 @@ export class AuthService {
     }
 
     async verifyAccountOnSignUp(body: verifyOtpDto) {
-        const user = await this.userService.findOneBy({ email: body.email });
+        const user = await User.findOneBy({ email: body.email });
 
-        if (!user || user.otp !== body.otp) {
+        if (!user) {
+            throw new HttpException('User was deleted after 10 minutes for not verified', HttpStatus.BAD_REQUEST);
+        }
+
+        if ( user.otp !== body.otp) {
             throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
         }
         const now = new Date();

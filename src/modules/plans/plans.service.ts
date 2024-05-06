@@ -129,7 +129,7 @@ export class PlansService {
   async createCharge(finalPrice, user) {
     const data = {
       amount: finalPrice,
-      currency: 'SAR',
+      currency: 'AED',
       customer_initiated: true,
       threeDSecure: true,
       save_card: false,

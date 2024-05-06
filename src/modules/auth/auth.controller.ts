@@ -59,6 +59,8 @@ export class AuthController {
 //////////find way to post on snapchat
 //////////contact us message and respond
 
+////the otp is deleted incase of enter iccorect otp!!!
+
 
 
 /////////// signup --->> add client token
