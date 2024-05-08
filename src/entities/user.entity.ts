@@ -53,6 +53,10 @@ export class User extends OBaseEntity {
     @Column({ nullable: true })
     otp?: string;
 
+    // @ApiPropertyOptional()
+    @Column({ nullable: true })
+    profileKey?: string;
+
     @ApiPropertyOptional()
     @Column({ nullable: true })
     otpRequestDate?: Date;

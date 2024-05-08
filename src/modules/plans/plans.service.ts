@@ -10,14 +10,17 @@ import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { Promocode } from '../../entities/promocode.entity';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import axios, { AxiosError } from 'axios';
+import { UserService } from '../user/user.service';
+import { PostingService } from '../posting/posting.service';
 
 @Injectable()
 export class PlansService {
-  
+
 
 
   constructor(
     @InjectRepository(Plan) private readonly repo: Repository<Plan>,
+    public postingService: PostingService,
   ) { }
 
   async create(createPlanDto: CreatePlanDto) {
@@ -187,7 +190,7 @@ export class PlansService {
     }
   }
 
-  async confirmPayment(chargeId: string): Promise<any> {
+  async confirmPayment(chargeId: string, req): Promise<any> {
     const headers = {
       Authorization: process.env.SK_TEST,
       Accept: 'application/json'
@@ -202,22 +205,23 @@ export class PlansService {
 
       if (responseData && responseData.status === 'CAPTURED') {
         console.log('Payment Done already');
-        await UserProgramSubscription.update({chargeId: chargeId}, {paymentStatus: PaymentStatus.Paid})
+        await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Paid })
       }
 
       else if (responseData && responseData.status === 'INITIATED') {
         console.log('Payment Still Pending');
-        await UserProgramSubscription.update({chargeId: chargeId}, {paymentStatus: PaymentStatus.Pending})
+        await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Pending })
       }
-
+      await this.postingService.createUserProfile(req, chargeId)
       return response.data;
-    } catch (error) {if (axios.isAxiosError(error)) {
-      const axiosError: AxiosError = error;
-      if (axiosError.response && axiosError.response.status === 400) {
-        throw new HttpException(`Invalid charge ID: ${chargeId}`, HttpStatus.BAD_REQUEST);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError: AxiosError = error;
+        if (axiosError.response && axiosError.response.status === 400) {
+          throw new HttpException(`Invalid charge ID: ${chargeId}`, HttpStatus.BAD_REQUEST);
+        }
       }
-    }
-    throw error;
+      // throw error;
     }
   }
 

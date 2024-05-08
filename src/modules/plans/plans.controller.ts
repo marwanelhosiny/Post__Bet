@@ -30,13 +30,14 @@ export class PlansController {
 
   @UseGuards(UserGuard)
   @Get('/my-subscribtion')
-  mySubscribtion( @Req() req){
+  mySubscribtion(@Req() req){
     return this.plansService.mySubscribtion(req)
   }
 
-  @Get(':chargeId')
-  confirmPayment(@Param('chargeId') chargeId: string) {
-    return this.plansService.confirmPayment(chargeId)
+  @UseGuards(UserGuard)
+  @Get('subscribe/confirmPayment/:chargeId')
+  confirmPayment(@Param('chargeId') chargeId: string, @Req() req) {
+    return this.plansService.confirmPayment(chargeId, req)
   }
 
   @Get(':id')

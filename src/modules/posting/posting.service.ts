@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AddPostDto } from '../../dtos/post.dto';
 import { PaymentStatus, UserProgramSubscription } from 'src/entities/subscription.entity';
 import * as cron from 'node-cron';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class PostingService {
@@ -12,12 +13,14 @@ export class PostingService {
         this.scheduleCronJob();
     }
 
-    async createUserProfile(req) {
+    async createUserProfile(req, chargeId) {
         try {
-            const API_KEY = 'S3CC888-8HJ4DHE-HCNWTZ0-7GEBR21';
+            // const API_KEY = 'S3CC888-8HJ4DHE-HCNWTZ0-7GEBR21';
+            // const API_KEY = 'Q3NA23F-N1G4DN6-GD448E9-16FYVBA';
+            const API_KEY = process.env.AYRSHARE_API_KEY;
             const url = 'https://app.ayrshare.com/api/profiles/profile';
             const data = {
-                title: 'ACME Profile'
+                title: chargeId
             };
 
             const response = await axios.post(url, data, {
@@ -28,13 +31,10 @@ export class PostingService {
             });
 
             console.log('Response:', response.data);
-            // Handle response as needed
+            await User.update({ id: req.user.id }, { profileKey: response.data.profileKey });
         } catch (error) {
             console.error('Error:', error.response.data);
-            // Handle error
         }
-
-        // then update user profileKey in db 
     }
 
     async addPost(req, addPostDto: AddPostDto) {
@@ -82,7 +82,7 @@ export class PostingService {
         await this.checkPlatformSupport(addPostDto.platform, subscription.plan);
 
 
-        // const response = await this.postToAyrshare(addPostDto, userId);
+        const response = await this.postToAyrshare(addPostDto, userId);
 
         subscription.planUsedCounter += 1;
         subscription.todayUsedPlanCounter += 1;
@@ -98,23 +98,39 @@ export class PostingService {
         }
     }
 
-    async postToAyrshare(addPostDto: AddPostDto, userId: string) {
-        const API_KEY = ''; // Replace with your Ayrshare API key
+    async postToAyrshare(addPostDto: AddPostDto, userId: number) {
+        const API_KEY = process.env.AYRSHARE_API_KEY; // Replace with your Ayrshare API key
         const url = 'https://app.ayrshare.com/api/post';
+    
+        const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
+    
         const data = {
-            ...addPostDto,
-            profileKey: '', // Use the user ID to get profileKey
+            post: addPostDto.post,
+            platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
+            // mediaUrls: addPostDto.mediaUrls ? addPostDto.mediaUrls.split(',') : [],
         };
-
-        const response = await axios.post(url, data, {
-            headers: {
-                'Authorization': `Bearer ${API_KEY}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        return response.data;
+    
+        try {
+            const response = await axios.post(url, JSON.stringify(data), {
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            // Log the error
+            console.error('Error from Ayrshare:', error.response.data);
+    
+            // Throw an error with the Ayrshare error response
+            throw new Error(JSON.stringify(error.response.data));
+        }
     }
+    
+    
+    
+    
+    
 
     private scheduleCronJob() {
         cron.schedule('0 0 * * *', async () => {

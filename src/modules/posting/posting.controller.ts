@@ -11,11 +11,11 @@ import { UserGuard } from 'src/guards/user.guard';
 export class  PostingController {
   constructor(private readonly postingService: PostingService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post('/create-user-profile')
-  createUserProfile(@Req() req){
-    return this.postingService.createUserProfile(req);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post('/create-user-profile')
+  // createUserProfile(@Req() req){
+  //   return this.postingService.createUserProfile();
+  // }
 
   @UseGuards(UserGuard)
   @Post('/post')
