@@ -4,7 +4,7 @@ import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
-import { AdminGuard } from 'src/guards/admin.guard';
+import { AdminGuard } from '../../guards/admin.guard';
 
 @ApiTags('Promo Code')
 @Controller('promocode')

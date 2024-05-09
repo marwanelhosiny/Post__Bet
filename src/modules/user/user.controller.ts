@@ -15,18 +15,18 @@ import { UserType } from '../../enums/user-type.enum';
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('User')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class UserController  {
   constructor(private readonly userService: UserService) {}
 
-  // // @Role(['Admin'])
-  // // @UseGuards(RolesGuard)
-  // @Post()
-  // // @ApiResponse({ type: CreateUserDto, })
-  // @ApiBody({ type: CreateUserDto, })
-  // async create(@Body() createUserDto: CreateUserDto) {
-  //   return await this.userService.create(createUserDto);
-  // }
+  // @Role(['Admin'])
+  @UseGuards(AdminGuard)
+  @Post()
+  // @ApiResponse({ type: CreateUserDto, })
+  @ApiBody({ type: CreateUserDto })
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
+  }
 
   @UseGuards(Admin_UserGuard)
   @Get()
@@ -50,6 +50,7 @@ export class UserController  {
   //   return this.userService.filterUsers(req);
   // }
 
+  @UseGuards(Admin_UserGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);

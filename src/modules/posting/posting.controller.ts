@@ -3,7 +3,7 @@ import { PostingService } from './posting.service';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { AddPostDto } from '../../dtos/post.dto';
-import { UserGuard } from 'src/guards/user.guard';
+import { UserGuard } from '../../guards/user.guard';
 
 
 @ApiTags('Posting')

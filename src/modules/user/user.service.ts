@@ -42,6 +42,8 @@ export class UserService extends AbstractService<User> {
       // let newRole = await this.getOrCreateRole(createUserDto.role);
       // user.role = { id: newRole.id } as Role;
       user.haveAccount = true;
+      user.userType = UserType.ADMIN;
+      user.firstTime = false;
 
       const createdUser = await this.userRepo.save(user as User);
       return await this.findObjectById(createdUser.id);
@@ -49,9 +51,12 @@ export class UserService extends AbstractService<User> {
       if (error.code === '23505') {
         let errorMessage: string;
         if (error.detail.includes('email')) {
-          errorMessage = 'Email already exists.';
-        } else if (error.detail.includes('mobile')) {
+          // errorMessage = 'Email already exists.';
+          throw new HttpException('This email used before', HttpStatus.BAD_REQUEST);
+        } 
+        else if (error.detail.includes('mobile')) {
           errorMessage = 'Mobile number already exists.';
+          // throw new HttpException('This email used before', HttpStatus.BAD_REQUEST);
         } else {
           errorMessage = 'Duplicate key value violates unique constraint.';
         }

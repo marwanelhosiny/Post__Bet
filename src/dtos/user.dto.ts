@@ -6,13 +6,13 @@ import { IsEmail } from "class-validator";
 export class CreateUserDto {
 
     @ApiProperty()
-    mobile: string;
+    email: string;
 
     @ApiProperty()
     password: string;
 
-    @ApiPropertyOptional({ default: UserType.USER })
-    userType: UserType;
+    // @ApiPropertyOptional({ default: UserType.USER })
+    // userType: UserType;
 }
 
 export class UpdateUserDto {

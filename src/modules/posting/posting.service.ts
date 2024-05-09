@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { AddPostDto } from '../../dtos/post.dto';
-import { PaymentStatus, UserProgramSubscription } from 'src/entities/subscription.entity';
+import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import * as cron from 'node-cron';
-import { User } from 'src/entities/user.entity';
+import { User } from '../../entities/user.entity';
 
 @Injectable()
 export class PostingService {

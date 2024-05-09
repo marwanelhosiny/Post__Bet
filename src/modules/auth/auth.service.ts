@@ -152,7 +152,9 @@ export class AuthService {
         user.otp = otp
         user.otpRequestDate = new Date()
 
-        let newUser = await this.userService.create(user)
+        let newUser =  await User.save(user)
+
+        // let newUser = await this.userService.create(user)
 
         await this.emailService.sendMail(newUser)
 
