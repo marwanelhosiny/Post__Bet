@@ -31,9 +31,18 @@ export class PlansController {
   }
 
   @UseGuards(UserGuard)
-  @Get('/my-subscribtion')
+  @Get('/mySubscribtions')
   mySubscribtion(@Req() req){
     return this.plansService.mySubscribtion(req)
+  }
+
+  // @UseGuards(AdminGuard)
+  @Get('/getAllSubscribtionsForAdmin')
+  getAllSubscribtion(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+  ) {
+    return this.plansService.getAllSubscribtion(page, pageSize);
   }
 
   @UseGuards(UserGuard)
@@ -63,5 +72,5 @@ export class PlansController {
   @Post('/subscribe')
   makeSubscribtion(@Body() planSubscripeDto:PlanSubscripeDto, @Req() req){
     return this.plansService.makeSubscription(planSubscripeDto, req)
-  }
+  } 
 }

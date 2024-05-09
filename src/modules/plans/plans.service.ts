@@ -16,8 +16,6 @@ import { PostingService } from '../posting/posting.service';
 @Injectable()
 export class PlansService {
 
-
-
   constructor(
     @InjectRepository(Plan) private readonly repo: Repository<Plan>,
     public postingService: PostingService,
@@ -233,7 +231,6 @@ export class PlansService {
   }
 
 
-
   async mySubscribtion(req: any) {
     const today = new Date();
     const userId = req.user.id;
@@ -261,4 +258,24 @@ export class PlansService {
       .addSelect('plan.Reddit')
       .getMany()
   }
+
+  async getAllSubscribtion(page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
+    
+    const subscriptions = await UserProgramSubscription
+        .createQueryBuilder('subscription')
+        .orderBy('subscription.id', 'ASC')
+        .leftJoin('subscription.plan', 'plan')
+        .leftJoin('subscription.user', 'user')
+        .leftJoin('subscription.promocode', 'promocode')
+        .addSelect('plan.id')
+        .addSelect('user.id')
+        .addSelect('promocode.id')
+        .skip(skip)
+        .take(pageSize)
+        .getMany();
+
+    return subscriptions;
+}
+
 }
