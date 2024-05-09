@@ -8,7 +8,7 @@ import { UserGuard } from 'src/guards/user.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 
 @ApiTags('Contact Us')
-@Controller('contact-us')
+@Controller('contactUs')
 export class ContactUsController {
   constructor(private readonly contactUsService: ContactUsService) {}
 
