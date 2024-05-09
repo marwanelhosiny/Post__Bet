@@ -56,11 +56,18 @@ export class PromocodeService {
   }
 
   async remove(id: number) {
-    const entityToRemove = await this.repo.findOne({ where: { id } });
-    if (!entityToRemove) {
-      throw new Error('Entity not found');
+    try {
+      const entityToRemove = await this.repo.findOne({ where: { id } });
+      if (!entityToRemove) {
+        throw new Error('Entity not found');
+      }
+      await this.repo.remove(entityToRemove);
+      return 'Entity deleted successfully';
+    } catch (error) {
+      if (error instanceof QueryFailedError && error.message.includes('violates foreign key constraint')) {
+        throw new HttpException('Cannot delete promocode because it is associated with one or more user program subscriptions', HttpStatus.BAD_REQUEST);
+      }
+      throw error;
     }
-    await this.repo.remove(entityToRemove);
-    return 'Entity deleted successfully';
   }
 }

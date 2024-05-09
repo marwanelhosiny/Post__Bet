@@ -6,6 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import { UserGuard } from '../../guards/user.guard';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
+import { AdminGuard } from '../../guards/admin.guard';
 
 @ApiTags('Plans')
 @Controller('plans')
@@ -13,6 +14,7 @@ export class PlansController {
   postingService: any;
   constructor(private readonly plansService: PlansService) {}
 
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() createPlanDto: CreatePlanDto) {
     return this.plansService.create(createPlanDto);
@@ -45,11 +47,13 @@ export class PlansController {
     return this.plansService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePlanDto: UpdatePlanDto) {
     return this.plansService.update(+id, updatePlanDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.plansService.remove(+id);
@@ -60,8 +64,4 @@ export class PlansController {
   makeSubscribtion(@Body() planSubscripeDto:PlanSubscripeDto, @Req() req){
     return this.plansService.makeSubscription(planSubscripeDto, req)
   }
-
-  
-
-
 }
