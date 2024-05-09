@@ -22,7 +22,9 @@ export class AdminGuard extends JwtAuthGuard {
             throw new HttpException('This User does not exist', HttpStatus.BAD_REQUEST);
         }
 
-        if (!(user.userType === UserType.ADMIN || user.userType === UserType.SELLER)) {
+        if (!(user.userType === UserType.ADMIN 
+            // || user.userType === UserType.SELLER
+        )) {
             throw new HttpException('Admin only can perform this Action', HttpStatus.BAD_REQUEST);
         }
         if (user.isActive == false) {

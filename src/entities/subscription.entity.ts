@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { Promocode } from './promocode.entity';
 import { OBaseEntity } from '../generic/base.entity';
 import { Plan } from './plan.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 
 export enum PaymentStatus {
@@ -14,7 +15,7 @@ export enum PaymentStatus {
 
 @Entity()
 export class UserProgramSubscription extends OBaseEntity {
-    
+
     @Column({ type: "enum", enum: PaymentStatus, default: PaymentStatus.Pending })
     paymentStatus: PaymentStatus;
 

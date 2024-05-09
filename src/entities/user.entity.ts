@@ -42,7 +42,9 @@ export class User extends OBaseEntity {
     suspended?: boolean;
 
     @ApiPropertyOptional({ enum: UserType })
-    @Column({ default: UserType.USER, type: 'simple-enum', enum: [UserType.ADMIN, UserType.SUPPLIER, UserType.SELLER, UserType.ORGANIZER, UserType.USER] })
+    @Column({ default: UserType.USER, type: 'simple-enum', enum: [UserType.ADMIN, 
+        // UserType.SUPPLIER, UserType.SELLER, UserType.ORGANIZER, 
+        UserType.USER] })
     userType?: UserType;
 
     @ApiPropertyOptional()

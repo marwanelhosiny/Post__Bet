@@ -259,23 +259,23 @@ export class PlansService {
       .getMany()
   }
 
-  async getAllSubscribtion(page: number, pageSize: number) {
+  async getAllSubscribtion(page: number, pageSize: number, paymentStatus: PaymentStatus) {
     const skip = (page - 1) * pageSize;
-    
-    const subscriptions = await UserProgramSubscription
-        .createQueryBuilder('subscription')
-        .orderBy('subscription.id', 'ASC')
-        .leftJoin('subscription.plan', 'plan')
-        .leftJoin('subscription.user', 'user')
-        .leftJoin('subscription.promocode', 'promocode')
-        .addSelect('plan.id')
-        .addSelect('user.id')
-        .addSelect('promocode.id')
-        .skip(skip)
-        .take(pageSize)
-        .getMany();
 
+    const subscriptions = await UserProgramSubscription
+      .createQueryBuilder('subscription')
+      .orderBy('subscription.id', 'ASC')
+      .leftJoin('subscription.plan', 'plan')
+      .leftJoin('subscription.user', 'user')
+      .leftJoin('subscription.promocode', 'promocode')
+      .where('subscription.paymentStatus = :paymentStatus', { paymentStatus })
+      .addSelect('plan.id')
+      .addSelect('user.id')
+      .addSelect('promocode.id')
+      .skip(skip)
+      .take(pageSize)
+      .getMany();
     return subscriptions;
-}
+  }
 
 }

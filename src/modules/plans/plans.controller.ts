@@ -2,11 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Quer
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import { UserGuard } from '../../guards/user.guard';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { AdminGuard } from '../../guards/admin.guard';
+import { PaymentStatus } from '../../entities/subscription.entity';
 
 @ApiTags('Plans')
 @Controller('plans')
@@ -36,13 +37,15 @@ export class PlansController {
     return this.plansService.mySubscribtion(req)
   }
 
-  // @UseGuards(AdminGuard)
+  @UseGuards(AdminGuard)
+  @ApiQuery({ name: 'paymentStatus', enum: PaymentStatus })
   @Get('/getAllSubscribtionsForAdmin')
   getAllSubscribtion(
     @Query('page') page: number,
     @Query('pageSize') pageSize: number,
+    @Query('paymentStatus') paymentStatus: PaymentStatus,
   ) {
-    return this.plansService.getAllSubscribtion(page, pageSize);
+    return this.plansService.getAllSubscribtion(page, pageSize, paymentStatus);
   }
 
   @UseGuards(UserGuard)

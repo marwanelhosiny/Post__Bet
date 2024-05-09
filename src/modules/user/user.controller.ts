@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put, Http
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from '../../dtos/user.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import * as cron from 'node-cron';
 import { UserGuard } from '../../guards/user.guard';
@@ -15,40 +15,26 @@ import { UserType } from '../../enums/user-type.enum';
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('User')
-// @UseGuards(JwtAuthGuard)
 export class UserController  {
   constructor(private readonly userService: UserService) {}
 
-  // @Role(['Admin'])
   @UseGuards(AdminGuard)
   @Post()
-  // @ApiResponse({ type: CreateUserDto, })
   @ApiBody({ type: CreateUserDto })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
   }
 
   @UseGuards(Admin_UserGuard)
+  @ApiQuery({ name: 'userType', enum: UserType })
   @Get()
   async filerByType(
-    @Query('type', new EnumValidationPipe(UserType)) type: string,
     @Query('page') page: number,
     @Query('pageSize') pageSize: number,
+    @Query('userType', ) userType: UserType,
   ) {
-
-    return await this.userService.filterUsers(type, page, pageSize)
-
+    return await this.userService.filterUsers(userType, page, pageSize)
   }
-
-  // // @UseGuards(AdminGuard)
-  // @Get()
-  // findAll(
-  //   @Req() req,
-  //   @Query('page') page: number,
-  //   @Query('pageSize') pageSize: number,
-  //   @Query('search') search: string) {
-  //   return this.userService.filterUsers(req);
-  // }
 
   @UseGuards(Admin_UserGuard)
   @Get(':id')
