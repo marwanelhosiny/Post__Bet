@@ -175,7 +175,6 @@ export class AuthService {
 
 
     async changePassword(req, body: ChangePasswordDto) {
-        console.log(req.user.id);
         let userDb = await User.findOne(
             {
                 where: { id: req.user.id },
@@ -198,6 +197,10 @@ export class AuthService {
 
     async veriftOtp(body: VerifyOtpDto) {
         let user = await User.findOne({ where: { otp: body.otp } })
+
+        if (!user) {
+            throw new HttpException("Incorrect OTP", 400)
+        }
 
         // if (user.otp != body.otp) {
         //     throw new UnauthorizedException('Invalid otp')
