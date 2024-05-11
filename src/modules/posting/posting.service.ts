@@ -99,33 +99,43 @@ export class PostingService {
     }
 
     async postToAyrshare(addPostDto: AddPostDto, userId: number) {
-        const API_KEY = process.env.AYRSHARE_API_KEY; // Replace with your Ayrshare API key
+        const API_KEY = process.env.AYRSHARE_API_KEY;
         const url = 'https://app.ayrshare.com/api/post';
     
-        const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
-    
-        const data = {
-            post: addPostDto.post,
-            platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
-            // mediaUrls: addPostDto.mediaUrls ? addPostDto.mediaUrls.split(',') : [],
-        };
-    
         try {
+            const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
+    
+            const data = {
+                post: addPostDto.post,
+                platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
+            };
+    
             const response = await axios.post(url, JSON.stringify(data), {
                 headers: {
                     'Authorization': `Bearer ${API_KEY}`,
                     'Content-Type': 'application/json'
                 }
             });
+    
             return response.data;
         } catch (error) {
             // Log the error
             console.error('Error from Ayrshare:', error.response.data);
     
-            // Throw an error with the Ayrshare error response
-            throw new Error(JSON.stringify(error.response.data));
+            // Check if the error code is 156 (Twitter not linked)
+            if (error.response.data.errors && error.response.data.errors[0].code === 156) {
+                const errorMessage = error.response.data.errors[0].message;
+                // Return a rejected promise with the error message
+                // return errorMessage;
+                throw new HttpException(errorMessage, 400)
+            } else {
+                // If it's not error code 156, throw the original error
+                throw error;
+            }
         }
     }
+    
+    
     
     
     
