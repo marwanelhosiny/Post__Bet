@@ -13,14 +13,14 @@ export class PostingService {
         this.scheduleCronJob();
     }
 
-    async createUserProfile(req, chargeId) {
+    async createUserProfile(req) {
         try {
             // const API_KEY = 'S3CC888-8HJ4DHE-HCNWTZ0-7GEBR21';
             // const API_KEY = 'Q3NA23F-N1G4DN6-GD448E9-16FYVBA';
             const API_KEY = process.env.AYRSHARE_API_KEY;
             const url = 'https://app.ayrshare.com/api/profiles/profile';
             const data = {
-                title: chargeId
+                title: req.user.email
             };
 
             const response = await axios.post(url, data, {

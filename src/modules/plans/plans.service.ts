@@ -12,6 +12,7 @@ import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import axios, { AxiosError } from 'axios';
 import { UserService } from '../user/user.service';
 import { PostingService } from '../posting/posting.service';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class PlansService {
@@ -195,6 +196,7 @@ export class PlansService {
     }
   }
 
+
   async confirmPayment(chargeId: string, req): Promise<any> {
     const headers = {
       Authorization: process.env.SK_TEST,
@@ -213,11 +215,15 @@ export class PlansService {
         await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Paid })
       }
 
-      else if (responseData && responseData.status === 'INITIATED') {
+      if (responseData && responseData.status === 'INITIATED') {
         console.log('Payment Still Pending');
         await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Pending })
       }
-      await this.postingService.createUserProfile(req, chargeId)
+
+      const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
+      if (!profileKey){
+        await this.postingService.createUserProfile(req)
+      }
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -226,7 +232,6 @@ export class PlansService {
           throw new HttpException(`Invalid charge ID: ${chargeId}`, HttpStatus.BAD_REQUEST);
         }
       }
-      // throw error;
     }
   }
 
@@ -258,6 +263,8 @@ export class PlansService {
       .addSelect('plan.Reddit')
       .getMany()
   }
+
+
 
   async getAllSubscribtion(page: number, pageSize: number, paymentStatus: PaymentStatus) {
     const skip = (page - 1) * pageSize;

@@ -48,7 +48,7 @@ export class User extends OBaseEntity {
     userType?: UserType;
 
     @ApiPropertyOptional()
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'text' }) // Use TEXT type for base64 encoded image
     profileImage?: string;
 
     @ApiPropertyOptional()
