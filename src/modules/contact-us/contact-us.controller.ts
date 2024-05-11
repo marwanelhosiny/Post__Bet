@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Quer
 import { ContactUsService } from './contact-us.service';
 import { CreateContactUsDto } from '../../dtos/create-contact-us.dto';
 import { UpdateContactUsDto } from '../../dtos/update-contact-us.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import { UserGuard } from 'src/guards/user.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
@@ -19,6 +19,9 @@ export class ContactUsController {
   }
 
   @UseGuards(Admin_UserGuard)
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
   @Get()
   findAll(
     @Req() req,

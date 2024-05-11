@@ -15,8 +15,8 @@ import { UserType } from '../../enums/user-type.enum';
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('User')
-export class UserController  {
-  constructor(private readonly userService: UserService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) { }
 
   @UseGuards(AdminGuard)
   @Post()
@@ -26,14 +26,16 @@ export class UserController  {
   }
 
   @UseGuards(Admin_UserGuard)
-  @ApiQuery({ name: 'userType', enum: UserType })
+  @ApiQuery({ name: 'userType', enum: UserType, required: false })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false })
   @Get()
   async filerByType(
-    @Query('page') page: number,
-    @Query('pageSize') pageSize: number,
-    @Query('userType', ) userType: UserType,
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('userType') userType?: UserType,
   ) {
-    return await this.userService.filterUsers(userType, page, pageSize)
+    return await this.userService.filterUsers(userType, page, pageSize);
   }
 
   @UseGuards(Admin_UserGuard)
@@ -56,9 +58,9 @@ export class UserController  {
     // cron.schedule('0 0 */14 * *', async () => {
     //     await this.userService.deleteUser(id);
     // });
-  //   cron.schedule('*/2 * * * *', async () => {
-  //     await this.userService.deleteUser(id);
-  // });
+    //   cron.schedule('*/2 * * * *', async () => {
+    //     await this.userService.deleteUser(id);
+    // });
     return { scheduled: true };
   }
 }

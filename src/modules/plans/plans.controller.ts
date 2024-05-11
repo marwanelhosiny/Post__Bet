@@ -22,6 +22,9 @@ export class PlansController {
   }
 
   @UseGuards(Admin_UserGuard)
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
   @Get()
   findAll(
     @Req() req,

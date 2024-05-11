@@ -11,7 +11,7 @@ import { I18nContext } from 'nestjs-i18n';
 
 @Injectable()
 export class UserService extends AbstractService<User> {
-  
+
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
   ) {
@@ -19,7 +19,7 @@ export class UserService extends AbstractService<User> {
   }
 
   async onModuleInit() {
-    const adminsCount = await this.userRepo.count({ where: {  email: 'admin@gmail.com' } })
+    const adminsCount = await this.userRepo.count({ where: { email: 'admin@gmail.com' } })
     // const role = await this.roleService.repository.findOneBy({ name: 'Admin' })
 
     if (adminsCount === 0) {
@@ -53,7 +53,7 @@ export class UserService extends AbstractService<User> {
         if (error.detail.includes('email')) {
           // errorMessage = 'Email already exists.';
           throw new HttpException('This email used before', HttpStatus.BAD_REQUEST);
-        } 
+        }
         else if (error.detail.includes('mobile')) {
           errorMessage = 'Mobile number already exists.';
           // throw new HttpException('This email used before', HttpStatus.BAD_REQUEST);
@@ -109,11 +109,26 @@ export class UserService extends AbstractService<User> {
     return await this.userRepo.save(user);
   }
 
-  async filterUsers(type: string, page: number, pageSize: number) {
-    let user = await this.userRepo.createQueryBuilder('p').where('p.userType = :userType', { userType: type })
-    user.orderBy('p.updatedAt', 'DESC');
-    return paginate<User>(user, { page: page, limit: pageSize });
+  async filterUsers(type?: string, page?: number, pageSize?: number) {
+    let queryBuilder = this.userRepo.createQueryBuilder('p');
+
+    // Add where clause only if type is provided
+    if (type) {
+      queryBuilder = queryBuilder.where('p.userType = :userType', { userType: type });
+    }
+
+    // Always order by updatedAt
+    queryBuilder.orderBy('p.updatedAt', 'DESC');
+
+    // Apply pagination if page and pageSize are provided
+    if (page && pageSize) {
+      return paginate<User>(queryBuilder, { page, limit: pageSize });
+    } else {
+      // Return all users if pagination parameters are not provided
+      return queryBuilder.getMany();
+    }
   }
+
 
   async updateUser(id, body) {
     try {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseP
 import { PromocodeService } from './promocode.service';
 import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import { AdminGuard } from '../../guards/admin.guard';
 
@@ -19,6 +19,9 @@ export class PromocodeController {
   }
 
   @UseGuards(Admin_UserGuard)
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
   @Get()
   findAll(
     @Req() req,
