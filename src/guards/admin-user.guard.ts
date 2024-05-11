@@ -1,4 +1,4 @@
-import { ExecutionContext, HttpException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ExecutionContext, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { User } from "../entities/user.entity";
 
@@ -34,7 +34,9 @@ export class Admin_UserGuard extends JwtAuthGuard {
         }
 
         if (userCheck.firstTime === false && userCheck.isActive === false) {
-            throw new UnauthorizedException('User is not active');
+            // throw new HttpException("User is not active", 440);
+            throw new HttpException('This User is not Active', HttpStatus.BAD_REQUEST);
+
         }
 
         if (userCheck.isActive === true && userCheck.suspended === true) {
