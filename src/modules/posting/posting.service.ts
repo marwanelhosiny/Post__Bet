@@ -103,7 +103,7 @@ export class PostingService {
         const url = 'https://app.ayrshare.com/api/post';
     
         try {
-            const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
+            // const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
     
             const data = {
                 post: addPostDto.post,
