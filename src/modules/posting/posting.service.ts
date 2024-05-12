@@ -82,7 +82,7 @@ export class PostingService {
         await this.checkPlatformSupport(addPostDto.platform, subscription.plan);
 
 
-        const response = await this.postToAyrshare(addPostDto, userId);
+        const response = await this.postToAyrshare(addPostDto);
 
         subscription.planUsedCounter += 1;
         subscription.todayUsedPlanCounter += 1;
@@ -98,15 +98,14 @@ export class PostingService {
         }
     }
 
-    async postToAyrshare(addPostDto: AddPostDto, userId: number) {
+    async postToAyrshare(addPostDto: AddPostDto) {
         const API_KEY = process.env.AYRSHARE_API_KEY;
         const url = 'https://app.ayrshare.com/api/post';
     
-        try {
-            // const profileKey = (await User.findOne({ where: { id: userId } })).profileKey;
-    
+        try {    
             const data = {
                 post: addPostDto.post,
+                mediaUrls: addPostDto.mediaUrls,
                 platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
             };
     
@@ -119,17 +118,11 @@ export class PostingService {
     
             return response.data;
         } catch (error) {
-            // Log the error
             console.error('Error from Ayrshare:', error.response.data);
-    
-            // Check if the error code is 156 (Twitter not linked)
-            if (error.response.data.errors && error.response.data.errors[0].code === 156) {
+            if (error.response.data.errors && error.response.data.errors[0].code === 156 || 400) {
                 const errorMessage = error.response.data.errors[0].message;
-                // Return a rejected promise with the error message
-                // return errorMessage;
-                throw new HttpException(errorMessage, 400)
+                throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST)
             } else {
-                // If it's not error code 156, throw the original error
                 throw error;
             }
         }
