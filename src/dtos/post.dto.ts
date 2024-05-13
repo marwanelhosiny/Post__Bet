@@ -2,14 +2,36 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, ArrayNotEmpty, IsBoolean, IsOptional } from 'class-validator';
 
 class FacebookOptions {
-    @ApiProperty({ required: false })
-    reels?: boolean;
 
     @ApiProperty({ required: false })
     stories?: boolean;
 
     @ApiProperty({ required: false })
+    reels?: boolean;
+
+    @ApiProperty({ required: false })
     title?: string;
+}
+
+class InstagramOptions {
+
+    @ApiProperty({ required: false })
+    stories?: boolean;
+
+    @ApiProperty({ required: false })
+    reels?: boolean;
+
+    @ApiProperty({ required: false })
+    shareReelsFeed: boolean;
+
+    @ApiProperty({ required: false })
+    audioName: string;
+
+    @ApiProperty({ required: false })
+    coverUrl: string;
+
+    @ApiProperty({ required: false })
+    thumbNailOffset: number
 }
 
 export class AddPostDto {
@@ -35,4 +57,8 @@ export class AddPostDto {
     @ApiProperty({ required: false })
     @IsOptional()
     faceBookOptions?: FacebookOptions;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    instagramOptions?: InstagramOptions;
 }

@@ -107,7 +107,8 @@ export class PostingService {
                 post: addPostDto.post,
                 mediaUrls: addPostDto.mediaUrls,
                 platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
-                faceBookOptions: addPostDto.faceBookOptions
+                faceBookOptions: addPostDto.faceBookOptions,
+                instagramOptions: addPostDto.instagramOptions
             };
     
             const response = await axios.post(url, JSON.stringify(data), {
