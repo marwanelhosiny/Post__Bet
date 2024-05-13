@@ -41,7 +41,9 @@ export class PlansController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiQuery({ name: 'paymentStatus', enum: PaymentStatus })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false })
+  @ApiQuery({ name: 'paymentStatus', enum: PaymentStatus, required: false })
   @Get('/getAllSubscribtionsForAdmin')
   getAllSubscribtion(
     @Query('page') page: number,
