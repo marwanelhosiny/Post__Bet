@@ -132,10 +132,10 @@ export class PlansService {
 
     await subscription.save();
 
-    const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
-      if (!profileKey){
-        await this.postingService.createUserProfile(req)
-      }
+    // const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
+    //   if (!profileKey){
+    //     await this.postingService.createUserProfile(req)
+    //   }
 
     return { transactionUrl, chargeId };
   }

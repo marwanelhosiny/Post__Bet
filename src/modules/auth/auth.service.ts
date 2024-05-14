@@ -19,6 +19,7 @@ import * as speakeasy from 'speakeasy';
 import { MailService } from '../mail/mail.service';
 import { ChangeForgetPasswordDto, VerifyOtpDto } from '../../dtos/auth.dto';
 import { SUtils } from '../../shared/utils';
+import { PostingService } from '../posting/posting.service';
 
 
 @Injectable()
@@ -26,7 +27,8 @@ export class AuthService {
     constructor(
         private jwtService: JwtService,
         public userService: UserService,
-        private emailService: MailService
+        private emailService: MailService,
+        public postingService: PostingService
     ) { }
 
     sign(user: User) {
@@ -46,10 +48,10 @@ export class AuthService {
         const user = await User.findOneBy({ email: body.email });
 
         if (!user) {
-            throw new HttpException('User was deleted after 10 minutes for not verified', HttpStatus.BAD_REQUEST);
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
         }
 
-        if ( user.otp !== body.otp) {
+        if (user.otp !== body.otp) {
             throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
         }
         const now = new Date();
@@ -57,9 +59,16 @@ export class AuthService {
 
 
 
-        if (timeDifference > 5) {   //////// minutes
-            await User.update({ email: body.email }, { verifiedOtp: false, otp: null, otpRequestDate: null })
-            throw new HttpException('OTP expired', HttpStatus.BAD_REQUEST);
+        // if (timeDifference > 5) {   //////// minutes
+        //     await User.update({ email: body.email }, { verifiedOtp: false, otp: null, otpRequestDate: null })
+        //     throw new HttpException('OTP expired', HttpStatus.BAD_REQUEST);
+        // }
+
+        let profileData
+
+        const profileKey = (await User.findOne({ where: { email: body.email } })).profileKey
+        if (!profileKey) {
+            profileData = await this.postingService.createUserProfile(user)
         }
 
         // Mark user as verified and save the record
@@ -70,6 +79,8 @@ export class AuthService {
         user.otp = null
         user.verifiedOtp = true
         user.otpRequestDate = null
+        user.refId = profileData.refId
+        user.profileKey = profileData.profileKey
         // user.lastLoginTime = new Date();
         await this.userService.update(user.id, user)
         const signedUser = this.sign(user);
@@ -152,7 +163,7 @@ export class AuthService {
         user.otp = otp
         user.otpRequestDate = new Date()
 
-        let newUser =  await User.save(user)
+        let newUser = await User.save(user)
 
         // let newUser = await this.userService.create(user)
 
