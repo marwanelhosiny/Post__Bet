@@ -50,6 +50,7 @@
     "geojson": "^0.5.0",
     "googleapis": "^129.0.0",
     "hbs": "^4.2.0",
+    "hbs-utils": "^0.0.4",
     "helmet": "^7.1.0",
     "moment-timezone": "^0.5.43",
     "morgan": "^1.10.0",

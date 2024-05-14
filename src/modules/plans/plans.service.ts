@@ -132,6 +132,11 @@ export class PlansService {
 
     await subscription.save();
 
+    const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
+      if (!profileKey){
+        await this.postingService.createUserProfile(req)
+      }
+
     return { transactionUrl, chargeId };
   }
 
@@ -220,10 +225,10 @@ export class PlansService {
         await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Pending })
       }
 
-      const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
-      if (!profileKey){
-        await this.postingService.createUserProfile(req)
-      }
+      // const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
+      // if (!profileKey){
+      //   await this.postingService.createUserProfile(req)
+      // }
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {

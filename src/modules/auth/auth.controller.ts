@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, HttpStatus, UsePipes, ValidationPipe, Get, Render } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LoginDto, LoginEmailDto, SignUpDto, verifyOtpDto } from '../../dtos/user.dto';
@@ -12,6 +12,12 @@ import { UserGuard } from '../../guards/user.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService,
   ) { }
+
+  @Get('loginPage')
+  @Render('login')
+  root() {
+    return { message: "hello world!"};
+  }
 
   @Post('/login')
   // @Role(['Admin'])
@@ -51,6 +57,9 @@ export class AuthController {
   async changeForgetPassword(@Body() body: ChangeForgetPasswordDto) {
     return this.authService.changeForgetPassword(body)
   }
+
+
+  
 }
 
 

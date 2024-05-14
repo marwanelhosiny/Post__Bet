@@ -9,9 +9,9 @@ import { HttpExceptionFilter } from './shared/global-exception';
 // import * as hbs from 'express-handlebars';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv';
-import helmet from 'helmet';
 import { ValidationExceptionFilter } from './shared/validation-exception.filter';
-
+import * as hbs from 'hbs';
+import * as hbsUtils from 'hbs-utils';
 
 dotenv.config();
 
@@ -25,12 +25,13 @@ async function bootstrap() {
   app.use(morgan('dev'));
   app.useGlobalFilters(new ValidationExceptionFilter());
 
-  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/public' })
+  hbs.registerPartials(join(__dirname, '..', 'views/layouts'));
+  hbsUtils(hbs).registerWatchedPartials(join(__dirname, '..', 'views/layouts'));
+  app.setViewEngine('hbs');
   // app.engine('hbs', hbs({ extname: 'hbs' }));
 
-  app.setViewEngine('hbs');
 
   const PORT = process.env.PORT || 8080;
 
