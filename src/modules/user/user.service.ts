@@ -8,6 +8,7 @@ import { UserType } from '../../enums/user-type.enum';
 import { AbstractService } from '../../generic/abstract.service';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { I18nContext } from 'nestjs-i18n';
+import axios from 'axios';
 
 @Injectable()
 export class UserService extends AbstractService<User> {
@@ -158,6 +159,36 @@ export class UserService extends AbstractService<User> {
   }
 
   async deleteUser(id: number) {
-    await this.repository.delete(id)
+    try {
+      const API_KEY = process.env.AYRSHARE_API_KEY;
+      const user = await User.findOneBy({ id: id });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      const PROFILE_KEY = user.profileKey;
+  
+      const url = 'https://app.ayrshare.com/api/profiles';
+  
+      const response = await axios.delete(`${url}`, {
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          'Profile-Key': PROFILE_KEY
+        }
+      });
+  
+      console.log('Response:', response.data);
+      await this.repository.delete(id);
+  
+      return response.data;
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error);
+      let errorMessage = error.response.data;
+      let statusCode = HttpStatus.BAD_REQUEST;
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+      throw new HttpException(errorMessage, statusCode);
+    }
   }
 }

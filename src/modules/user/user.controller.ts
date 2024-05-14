@@ -51,16 +51,19 @@ export class UserController {
     return await this.userService.updateUser(id, body)
   }
 
-  @UseGuards(UserGuard)
+  @UseGuards(Admin_UserGuard)
   @Delete(':id')
   async deleteOne(@Param('id') id: number) {
     // Schedule deletion after 14 days
     // cron.schedule('0 0 */14 * *', async () => {
-    //     await this.userService.deleteUser(id);
+        await this.userService.deleteUser(id);
     // });
     //   cron.schedule('*/2 * * * *', async () => {
-    //     await this.userService.deleteUser(id);
+        // await this.userService.deleteUser(id);
     // });
-    return { scheduled: true };
+    return "Delete postbet account and associated ayrshare account success";
   }
 }
+
+///when delete user create its account on ayrshare
+/// make sure for shedule posts
