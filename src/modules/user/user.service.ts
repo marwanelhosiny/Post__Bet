@@ -31,7 +31,9 @@ export class UserService extends AbstractService<User> {
         profileImage: '',
         otp: '',
         haveAccount: true,
-        userType: UserType.ADMIN
+        userType: UserType.ADMIN,
+        verifiedOtp: true,
+        firstTime: false,
       }
       await this.create(newAdmin as User)
     }
