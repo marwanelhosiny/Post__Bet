@@ -6,11 +6,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError, Like, ILike } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
 import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
+import { Plan } from 'src/entities/plan.entity';
 
 @Injectable()
 export class PromocodeService {
+
   constructor(
-    @InjectRepository(Promocode) private readonly repo: Repository<Promocode>,
+    @InjectRepository(Promocode) private readonly repo: Repository<Promocode>
   ) { }
 
   async create(createPromocodeDto: CreatePromocodeDto) {
@@ -68,6 +70,39 @@ export class PromocodeService {
         throw new HttpException('Cannot delete promocode because it is associated with one or more user program subscriptions', HttpStatus.BAD_REQUEST);
       }
       throw error;
+    }
+  }
+
+  async checkPromoCode(promoCode: string, planId: number) {
+    const promo = await this.repo.findOne({ where: { promoCode: promoCode } });
+    if (!promo) {
+      throw new HttpException('Promo code not found', HttpStatus.BAD_REQUEST);
+    }
+    if (promo.isActive == false){
+      throw new HttpException('This Promo code is not active', HttpStatus.BAD_REQUEST);
+    }
+
+    const plan = await Plan.findOne({ where:{id: planId} });
+    if (!plan) {
+      throw new HttpException('Plan not found', HttpStatus.BAD_REQUEST)
+    }
+    if(plan.isActive == false){
+      throw new HttpException('This Plan is not active', HttpStatus.BAD_REQUEST);
+    }
+
+    const discount  = (promo.percentage / 100 ) * plan.price
+    const priceAfterDiscount = plan.price - discount
+    const vatAndTaxes = priceAfterDiscount * (plan.vat / 100)
+    const totalPaid = priceAfterDiscount + vatAndTaxes
+
+    return {
+      'Promo Code Percentage': promo.percentage,
+      'Plan Price': plan.price,
+      'Discount' : discount,
+      'Price after discount': priceAfterDiscount,
+      'Vat and taxes Percentage' : plan.vat,
+      'Vat and Taxes': vatAndTaxes,
+      'Total Paid': totalPaid
     }
   }
 }

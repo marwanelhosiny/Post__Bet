@@ -37,6 +37,14 @@ export class PromocodeController {
     return this.promocodeService.findOne(+id);
   }
 
+  @Get('checkPromoCode/:promoCode/:planId')
+  checkPromoCode(
+    @Param('promoCode') promoCode: string,
+    @Param('planId') planId: number
+) {
+    return this.promocodeService.checkPromoCode(promoCode, planId);
+  }
+
   @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
   @Patch(':id')

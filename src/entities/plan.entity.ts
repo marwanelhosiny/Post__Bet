@@ -27,7 +27,7 @@ export class Plan extends OBaseEntity{
     limit_number_of_posts_per_day?: number;
 
     @ApiProperty()
-    @Column({ default: 14 })
+    @Column({ default: 0 })
     vat?: number;
 
     @ApiProperty()
