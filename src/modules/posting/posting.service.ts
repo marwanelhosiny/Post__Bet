@@ -100,10 +100,10 @@ export class PostingService {
 
     async postToAyrshare(addPostDto: AddPostDto, req) {
         const API_KEY = process.env.AYRSHARE_API_KEY;
-        const PROFILE_KEY = (await User.findOne({where:{id:req.user.id}})).profileKey
+        const PROFILE_KEY = (await User.findOne({where:{id:req.user.id}})).profileKey;
         const url = 'https://app.ayrshare.com/api/post';
     
-        try {    
+        try {
             const data = {
                 post: addPostDto.post,
                 mediaUrls: addPostDto.mediaUrls,
@@ -122,15 +122,28 @@ export class PostingService {
     
             return response.data;
         } catch (error) {
-            console.error('Error from Ayrshare:', error.response.data);
-            if (error.response.data.errors && (error.response.data.errors[0].code === 156 || error.response.status === 400)) {
-                const errorMessage = error.response.data.errors[0].message;
-                throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+            console.error('Error from Ayrshare:', error.response ? error.response.data : error.message);
+    
+            if (error.response) {
+                // Ayrshare API errors
+                const errorMessage = error.response.data.errors ? error.response.data.errors[0].message : 'Unknown error';
+                const statusCode = error.response.status || HttpStatus.INTERNAL_SERVER_ERROR;
+                throw new HttpException({
+                    status: statusCode,
+                    error: errorMessage,
+                    details: error.response.data
+                }, statusCode);
             } else {
-                throw error;
+                // Other errors (e.g., network issues)
+                throw new HttpException({
+                    status: HttpStatus.INTERNAL_SERVER_ERROR,
+                    error: 'An error occurred while processing your request.',
+                    details: error.message
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
+    
     
     
     
