@@ -116,7 +116,9 @@ export class PlansService {
 
     if (plan.isFree) {
       subscription.paymentStatus = PaymentStatus.Free;
-    }
+      await subscription.save();
+      return { message: 'Plan subscribed successfully.' };
+  }
 
     if (promocode) {
       promocode.usedCounter++;
@@ -131,11 +133,6 @@ export class PlansService {
     subscription.chargeId = chargeId;
 
     await subscription.save();
-
-    // const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
-    //   if (!profileKey){
-    //     await this.postingService.createUserProfile(req)
-    //   }
 
     return { transactionUrl, chargeId };
   }
