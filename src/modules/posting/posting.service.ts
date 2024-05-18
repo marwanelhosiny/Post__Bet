@@ -82,7 +82,7 @@ export class PostingService {
         await this.checkPlatformSupport(addPostDto.platform, subscription.plan);
 
 
-        const response = await this.postToAyrshare(addPostDto);
+        const response = await this.postToAyrshare(addPostDto, req);
 
         subscription.planUsedCounter += 1;
         subscription.todayUsedPlanCounter += 1;
@@ -98,8 +98,9 @@ export class PostingService {
         }
     }
 
-    async postToAyrshare(addPostDto: AddPostDto) {
+    async postToAyrshare(addPostDto: AddPostDto, req) {
         const API_KEY = process.env.AYRSHARE_API_KEY;
+        const PROFILE_KEY = (await User.findOne({where:{id:req.user.id}})).profileKey
         const url = 'https://app.ayrshare.com/api/post';
     
         try {    
@@ -114,21 +115,23 @@ export class PostingService {
             const response = await axios.post(url, JSON.stringify(data), {
                 headers: {
                     'Authorization': `Bearer ${API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Profile-Key': PROFILE_KEY
                 }
             });
     
             return response.data;
         } catch (error) {
             console.error('Error from Ayrshare:', error.response.data);
-            if (error.response.data.errors && error.response.data.errors[0].code === 156 || 400) {
+            if (error.response.data.errors && (error.response.data.errors[0].code === 156 || error.response.status === 400)) {
                 const errorMessage = error.response.data.errors[0].message;
-                throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST)
+                throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
             } else {
                 throw error;
             }
         }
     }
+    
     
     
     
