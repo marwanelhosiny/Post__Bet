@@ -7,7 +7,7 @@ import { SUtils } from '../../shared/utils';
 import { UserType } from '../../enums/user-type.enum';
 import { AbstractService } from '../../generic/abstract.service';
 import { paginate } from 'nestjs-typeorm-paginate';
-import { I18nContext } from 'nestjs-i18n';
+// import { I18nContext } from 'nestjs-i18n';
 import axios from 'axios';
 
 @Injectable()

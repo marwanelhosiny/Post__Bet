@@ -6,9 +6,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { FileModule } from './modules/file/file.module';
+// import { FileModule } from './modules/file/file.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+// import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { MailModule } from './modules/mail/mail.module';
 import { PostingModule } from './modules/posting/posting.module';
@@ -45,21 +45,21 @@ const AllModules = [
 @Module({
   imports: [
     // ScheduleModule.forRoot(),
-    I18nModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: 'en',
-        loaderOptions: {
-          path: path.join(__dirname, '/i18n/'),
-          watch: true,
-        },
-      }),
-      resolvers: [
-        { use: QueryResolver, options: ['lang'] },
-        AcceptLanguageResolver,
-        new HeaderResolver(['x-lang']),
-      ],
-      inject: [ConfigService],
-    }),
+    // I18nModule.forRootAsync({
+    //   useFactory: (configService: ConfigService) => ({
+    //     fallbackLanguage: 'en',
+    //     loaderOptions: {
+    //       path: path.join(__dirname, '/i18n/'),
+    //       watch: true,
+    //     },
+    //   }),
+    //   resolvers: [
+    //     { use: QueryResolver, options: ['lang'] },
+    //     AcceptLanguageResolver,
+    //     new HeaderResolver(['x-lang']),
+    //   ],
+    //   inject: [ConfigService],
+    // }),
 
     MulterModule.register({
       dest: './uploads',
