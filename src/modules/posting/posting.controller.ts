@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { PostingService } from './posting.service';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -18,8 +18,10 @@ export class  PostingController {
   // }
 
   @UseGuards(UserGuard)
-  @Post('/post')
-  addPost(@Body() addPostDto: AddPostDto, @Req() req){
-    return this.postingService.addPost(req, addPostDto);
+  @Post('/post/:subscriptionId')
+  addPost(
+    @Param('subscriptionId') subscriptionId: number,
+    @Body() addPostDto: AddPostDto, @Req() req){
+    return this.postingService.addPost(subscriptionId,req, addPostDto);
   }
 }

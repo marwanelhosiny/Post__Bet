@@ -37,17 +37,29 @@ export class PostingService {
         }
     }
 
-    async addPost(req, addPostDto: AddPostDto) {
+    async addPost(subscriptionId: number,req, addPostDto: AddPostDto) {
 
         const userId = req.user.id;
-        const subscription = await UserProgramSubscription.findOne({
-            where: { user: userId },
-            order: { id: 'DESC' },
-            relations: ['plan']
-        });
+        // const subscription = await UserProgramSubscription.findOne({
+        //     where: { id: subscriptionId },
+        //     // order: { id: 'DESC' },
+        //     // relations: ['plan']
+        // });
+
+        const subscription = await UserProgramSubscription.createQueryBuilder('subscription')
+            .leftJoinAndSelect('subscription.plan', 'plan')
+            .leftJoinAndSelect('subscription.user', 'user')
+            .where('subscription.id = :subscriptionId', { subscriptionId })
+            // .andWhere('subscription.planId = :planId', { planId })
+            // .orderBy('subscription.id', 'DESC')
+            .getOne();
 
         if (!subscription) {
             throw new HttpException('User does not have an active subscription', HttpStatus.BAD_REQUEST);
+        }
+
+        if (subscription.user.id != req.user.id) {
+            throw new HttpException('User Mismatch', HttpStatus.BAD_REQUEST);
         }
 
         const today = new Date();
