@@ -253,6 +253,7 @@ export class PlansService {
       .addSelect('subscription.todayUsedPlanCounter')
       .addSelect('subscription.chargeId')
       .addSelect('subscription.transactionUrl')
+      .addSelect('subscription.paymentStatus')
       .addSelect('plan.name')
       .addSelect('plan.details')
       .addSelect('plan.number_of_posts')
