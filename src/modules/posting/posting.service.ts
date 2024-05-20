@@ -114,7 +114,7 @@ export class PostingService {
         const API_KEY = process.env.AYRSHARE_API_KEY;
         const PROFILE_KEY = (await User.findOne({where:{id:req.user.id}})).profileKey;
         const url = 'https://app.ayrshare.com/api/post';
-    
+
         try {
             const data = {
                 post: addPostDto.post,

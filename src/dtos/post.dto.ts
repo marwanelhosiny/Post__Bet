@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, ArrayNotEmpty, IsBoolean, IsOptional } from 'class-validator';
+import { IsArray, ArrayNotEmpty, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 class FacebookOptions {
 
@@ -50,9 +50,13 @@ export class AddPostDto {
     @ApiProperty({
         type: 'string',
         format: 'binary',
+        isArray: true,
         required: true,
     })
-    mediaUrls: string;
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsString({ each: true })
+    mediaUrls: string[];
 
     @ApiProperty({ required: false })
     @IsOptional()
