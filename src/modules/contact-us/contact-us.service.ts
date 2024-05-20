@@ -6,6 +6,8 @@ import { ContactUs } from '../../entities/contact-us.entity';
 import { ILike, Repository } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { FindOptionsOrder } from 'typeorm/find-options/FindOptionsOrder';
+
 
 @Injectable()
 export class ContactUsService {
@@ -39,21 +41,29 @@ export class ContactUsService {
       page: page,
       limit: pageSize
     };
-    let whereClause = {};
+  
+    let whereClause: any = {}; // Use 'any' to allow dynamic property addition
     if (search) {
       whereClause = {
         ...whereClause,
         message: (search.length > 0) ? ILike(`%${search}%`) : undefined
       };
     }
+  
+    const orderClause: FindOptionsOrder<ContactUs> = {
+      updatedAt: 'DESC' as const // Ensure 'DESC' is typed correctly
+    };
+  
     if (req.user.userType === UserType.ADMIN) {
-      return paginate<ContactUs>(this.repo, options, { where: whereClause });
+      return paginate<ContactUs>(this.repo, options, { where: whereClause, order: orderClause });
     }
+    
     if (req.user.userType === UserType.USER) {
       whereClause = { ...whereClause, email: req.user.email };
-      return paginate<ContactUs>(this.repo, options, { where: whereClause });
+      return paginate<ContactUs>(this.repo, options, { where: whereClause, order: orderClause });
     }
   }
+  
 
 
   async findOne(id: number) {

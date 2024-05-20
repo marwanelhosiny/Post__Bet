@@ -61,4 +61,7 @@ export class AddPostDto {
     @ApiProperty({ required: false })
     @IsOptional()
     instagramOptions?: InstagramOptions;
+
+    @ApiProperty()
+    isVideo: boolean
 }

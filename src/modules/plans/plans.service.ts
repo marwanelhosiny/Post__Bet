@@ -272,6 +272,12 @@ export class PlansService {
 
 
   async getAllSubscribtion(page: number, pageSize: number, paymentStatus: PaymentStatus) {
+
+    if (!page && !pageSize) {
+      page = 1;
+      pageSize = 100
+    }
+
     const skip = (page - 1) * pageSize;
 
     const subscriptions = await UserProgramSubscription

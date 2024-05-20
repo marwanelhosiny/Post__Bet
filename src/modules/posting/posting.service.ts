@@ -121,9 +121,10 @@ export class PostingService {
                 mediaUrls: addPostDto.mediaUrls,
                 platforms: addPostDto.platform.map(item => item.platform.toLowerCase()),
                 faceBookOptions: addPostDto.faceBookOptions,
-                instagramOptions: addPostDto.instagramOptions
+                instagramOptions: addPostDto.instagramOptions,
+                isVideo: addPostDto.isVideo,
             };
-    
+
             const response = await axios.post(url, JSON.stringify(data), {
                 headers: {
                     'Authorization': `Bearer ${API_KEY}`,
@@ -131,7 +132,7 @@ export class PostingService {
                     'Profile-Key': PROFILE_KEY
                 }
             });
-    
+
             return response.data;
         } catch (error) {
             console.error('Error from Ayrshare:', error.response ? error.response.data : error.message);
