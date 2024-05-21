@@ -40,6 +40,10 @@ export class Plan extends OBaseEntity{
 
     @ApiProperty()
     @Column({ default: false })
+    unLimited?: boolean;
+
+    @ApiProperty()
+    @Column({ default: false })
     Facebook?: boolean;
 
     @ApiProperty()

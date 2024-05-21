@@ -37,7 +37,7 @@ export class PostingService {
         }
     }
 
-    async addPost(subscriptionId: number,req, addPostDto: AddPostDto) {
+    async addPost(subscriptionId: number, req, addPostDto: AddPostDto) {
 
         const userId = req.user.id;
         // const subscription = await UserProgramSubscription.findOne({
@@ -70,8 +70,14 @@ export class PostingService {
             throw new HttpException('Subscription is not active', HttpStatus.BAD_REQUEST);
         }
 
-        if (subscription.planUsedCounter >= subscription.plan.number_of_posts) {
-            throw new HttpException('You have used all your Subscription', HttpStatus.BAD_REQUEST);
+        // if (subscription.planUsedCounter >= subscription.plan.number_of_posts) {
+        //     throw new HttpException('You have used all your Subscription', HttpStatus.BAD_REQUEST);
+        // }
+
+        if (!(subscription.plan.number_of_posts == null)) {
+            if (subscription.planUsedCounter >= subscription.plan.number_of_posts) {
+                throw new HttpException('You have used all your Subscription', HttpStatus.BAD_REQUEST);
+            }
         }
 
         if (!(subscription.plan.limit_number_of_posts_per_day == null)) {
@@ -112,7 +118,7 @@ export class PostingService {
 
     async postToAyrshare(addPostDto: AddPostDto, req) {
         const API_KEY = process.env.AYRSHARE_API_KEY;
-        const PROFILE_KEY = (await User.findOne({where:{id:req.user.id}})).profileKey;
+        const PROFILE_KEY = (await User.findOne({ where: { id: req.user.id } })).profileKey;
         const url = 'https://app.ayrshare.com/api/post';
 
         try {
@@ -136,7 +142,7 @@ export class PostingService {
             return response.data;
         } catch (error) {
             console.error('Error from Ayrshare:', error.response ? error.response.data : error.message);
-    
+
             if (error.response) {
                 // Ayrshare API errors
                 const errorMessage = error.response.data.errors ? error.response.data.errors[0].message : 'Unknown error';
@@ -156,15 +162,15 @@ export class PostingService {
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
 
     private scheduleCronJob() {
         cron.schedule('0 0 * * *', async () => {

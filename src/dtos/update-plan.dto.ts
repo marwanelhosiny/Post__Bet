@@ -30,6 +30,9 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
     isActive: boolean;
 
     @ApiProperty()
+    unLimited: boolean;
+
+    @ApiProperty()
     isFree: boolean;
 
     @ApiProperty()

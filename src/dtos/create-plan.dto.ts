@@ -28,6 +28,9 @@ export class CreatePlanDto {
     isActive: boolean;
 
     @ApiProperty()
+    unLimited: boolean;
+
+    @ApiProperty()
     isFree: boolean;
 
     @ApiProperty()
