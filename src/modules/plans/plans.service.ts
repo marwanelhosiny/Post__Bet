@@ -3,7 +3,7 @@ import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
 import { Plan } from '../../entities/plan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Like, QueryFailedError, Repository } from 'typeorm';
+import { FindManyOptions, ILike, Like, QueryFailedError, Repository } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
 import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
@@ -32,6 +32,7 @@ export class PlansService {
       page: page,
       limit: pageSize
     };
+  
     let whereClause = {};
     if (search) {
       whereClause = {
@@ -39,12 +40,20 @@ export class PlansService {
         name: (search.length > 0) ? ILike(`%${search}%`) : undefined
       };
     }
+  
+    const paginateOptions: FindManyOptions<Plan> = {
+      where: whereClause,
+      order: { price: 'ASC' }
+    };
+  
     if (req.user.userType === UserType.ADMIN) {
-      return paginate<Plan>(this.repo, options, { where: whereClause });
+      return paginate<Plan>(this.repo, options, paginateOptions);
     }
+  
     if (req.user.userType === UserType.USER) {
       whereClause = { ...whereClause, isActive: true };
-      return paginate<Plan>(this.repo, options, { where: whereClause });
+      paginateOptions.where = whereClause;
+      return paginate<Plan>(this.repo, options, paginateOptions);
     }
   }
 
