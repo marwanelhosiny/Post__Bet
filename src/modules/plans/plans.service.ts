@@ -8,7 +8,7 @@ import { UserType } from '../../enums/user-type.enum';
 import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import { PlanSubscripeDto } from '../../dtos/plan-subscripe.dto';
 import { Promocode } from '../../entities/promocode.entity';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import axios, { AxiosError } from 'axios';
 import { UserService } from '../user/user.service';
 import { PostingService } from '../posting/posting.service';
@@ -271,11 +271,9 @@ export class PlansService {
 
 
 
-  async getAllSubscription(page: number, pageSize: number, paymentStatus?: string) {
+  async getAllSubscription(page: number, pageSize: number, paymentStatus?: string): Promise<Pagination<UserProgramSubscription>> {
     page = page || 1;
     pageSize = pageSize || 100;
-    
-    const skip = (page - 1) * pageSize;
     
     const queryBuilder = UserProgramSubscription
       .createQueryBuilder('subscription')
@@ -287,16 +285,14 @@ export class PlansService {
       .addSelect('user.id')
       .addSelect('user.email')
       .addSelect('promocode.id')
-      .addSelect('promocode.promoCode')
-      .skip(skip)
-      .take(pageSize);
+      .addSelect('promocode.promoCode');
 
     if (paymentStatus) {
       queryBuilder.andWhere('subscription.paymentStatus = :paymentStatus', { paymentStatus });
     }
 
-    const subscriptions = await queryBuilder.getMany();
-    return subscriptions;
+    const pagination = await paginate<UserProgramSubscription>(queryBuilder, { page, limit: pageSize });
+    return pagination;
   }
   
   
