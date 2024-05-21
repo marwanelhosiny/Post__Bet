@@ -12,17 +12,23 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
     details: string;
 
     @ApiProperty()
+    @IsInt()
+    @Min(0, { message: 'Price must be a positive value' })
     price: number;
 
     @ApiProperty()
+    @IsInt()
+    @Min(0, { message: 'Price must be a positive value' })
     number_of_posts: number;
 
     @ApiProperty()
+    @IsInt()
+    @Min(0, { message: 'Price must be a positive value' })
     limit_number_of_posts_per_day: number;
 
     @ApiProperty()
     @IsInt()
-    @Min(0)
+    @Min(0, { message: 'Price must be a positive value' })
     @Max(100)
     vat: number;
 
