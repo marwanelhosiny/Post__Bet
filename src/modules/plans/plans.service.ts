@@ -271,29 +271,33 @@ export class PlansService {
 
 
 
-  async getAllSubscribtion(page: number, pageSize: number, paymentStatus: PaymentStatus) {
-
-    if (!page && !pageSize) {
-      page = 1;
-      pageSize = 100
-    }
-
+  async getAllSubscription(page: number, pageSize: number, paymentStatus?: string) {
+    page = page || 1;
+    pageSize = pageSize || 100;
+    
     const skip = (page - 1) * pageSize;
-
-    const subscriptions = await UserProgramSubscription
+    
+    const queryBuilder = UserProgramSubscription
       .createQueryBuilder('subscription')
-      .orderBy('subscription.id', 'ASC')
+      .orderBy('subscription.id', 'DESC')
       .leftJoin('subscription.plan', 'plan')
       .leftJoin('subscription.user', 'user')
       .leftJoin('subscription.promocode', 'promocode')
-      .where('subscription.paymentStatus = :paymentStatus', { paymentStatus })
       .addSelect('plan.id')
       .addSelect('user.id')
+      .addSelect('user.email')
       .addSelect('promocode.id')
+      .addSelect('promocode.promoCode')
       .skip(skip)
-      .take(pageSize)
-      .getMany();
+      .take(pageSize);
+
+    if (paymentStatus) {
+      queryBuilder.andWhere('subscription.paymentStatus = :paymentStatus', { paymentStatus });
+    }
+
+    const subscriptions = await queryBuilder.getMany();
     return subscriptions;
   }
-
+  
+  
 }

@@ -44,13 +44,13 @@ export class PlansController {
   @ApiQuery({ name: 'page', type: Number, required: false })
   @ApiQuery({ name: 'pageSize', type: Number, required: false })
   @ApiQuery({ name: 'paymentStatus', enum: PaymentStatus, required: false })
-  @Get('/getAllSubscribtionsForAdmin')
+  @Get('/getAllSubscriptionForAdmin')
   getAllSubscribtion(
     @Query('page') page: number,
     @Query('pageSize') pageSize: number,
     @Query('paymentStatus') paymentStatus: PaymentStatus,
   ) {
-    return this.plansService.getAllSubscribtion(page, pageSize, paymentStatus);
+    return this.plansService.getAllSubscription(page, pageSize, paymentStatus);
   }
 
   @UseGuards(UserGuard)
