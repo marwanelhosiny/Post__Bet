@@ -190,7 +190,7 @@ export class PlansService {
     };
 
     const headers = {
-      Authorization: process.env.SK_TEST,
+      Authorization: process.env.SK_PAYTAPS,
       Accept: 'application/json',
       'Content-Type': 'application/json'
     };
@@ -210,7 +210,7 @@ export class PlansService {
 
   async confirmPayment(chargeId: string, req): Promise<any> {
     const headers = {
-      Authorization: process.env.SK_TEST,
+      Authorization: process.env.SK_PAYTAPS,
       Accept: 'application/json'
     };
 
