@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
@@ -16,6 +16,7 @@ export class PlansController {
   constructor(private readonly plansService: PlansService) {}
 
   @UseGuards(AdminGuard)
+  @UsePipes(ValidationPipe)
   @Post()
   create(@Body() createPlanDto: CreatePlanDto) {
     return this.plansService.create(createPlanDto);
