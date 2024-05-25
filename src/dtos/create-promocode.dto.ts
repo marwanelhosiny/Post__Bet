@@ -8,7 +8,7 @@ export class CreatePromocodeDto {
 
     @ApiProperty()
     @IsInt()
-    @Min(0, { message: 'Percentage must be a positive value' })
+    @Min(0)
     @Max(100)
     percentage: number;
 

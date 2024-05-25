@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, Max, Min } from "class-validator";
+import { IsInt, IsOptional, Max, Min } from "class-validator";
 
 export class CreatePlanDto {
 
@@ -11,22 +11,23 @@ export class CreatePlanDto {
 
     @ApiProperty()
     @IsInt()
-    @Min(0, { message: 'Price must be a positive value' })
+    @Min(0)
     price: number;
 
     @ApiProperty()
     @IsInt()
-    @Min(0, { message: 'Price must be a positive value' })
+    @Min(0)
     number_of_posts: number;
 
     @ApiProperty()
+    // @IsOptional()
     @IsInt()
-    @Min(0, { message: 'Price must be a positive value' })
+    @Min(0)
     limit_number_of_posts_per_day: number;
 
     @ApiProperty()
     @IsInt()
-    @Min(0, { message: 'Price must be a positive value' })
+    @Min(0)
     @Max(100)
     vat: number;
 
