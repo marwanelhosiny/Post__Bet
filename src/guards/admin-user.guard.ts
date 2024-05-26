@@ -1,6 +1,7 @@
 import { ExecutionContext, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { User } from "../entities/user.entity";
+import { UserType } from "src/enums/user-type.enum";
 
 @Injectable()
 export class Admin_UserGuard extends JwtAuthGuard {
@@ -25,12 +26,17 @@ export class Admin_UserGuard extends JwtAuthGuard {
         const userIdFromPathParam = +params.id;
 
         const userCheck = await User.findOne({ where: { id: userIdFromToken } });
-        if (!userCheck) {
-            throw new NotFoundException("User not found.");
-        }
+
+        const userUser = await User.findOne({where: {id: userIdFromPathParam}})
+        // if (!userCheck) {
+        //     throw new NotFoundException("User not found.");
+        // }
 
         if (userIdFromToken !== userIdFromPathParam) {
-            throw new UnauthorizedException("You are not authorized to update another user.");
+            // throw new UnauthorizedException("You are not authorized to update another user.");
+            if (userIdFromToken !== 1 && userUser.userType !== UserType.USER) {
+                throw new HttpException('You are not authorized to update another user', HttpStatus.BAD_REQUEST);
+            }
         }
 
         if (userCheck.firstTime === false && userCheck.isActive === false) {
