@@ -12,7 +12,7 @@ import { AdminGuard } from '../../guards/admin.guard';
 @ApiTags('Promo Code')
 @Controller('promocode')
 export class PromocodeController {
-  constructor(private readonly promocodeService: PromocodeService) {}
+  constructor(private readonly promocodeService: PromocodeService) { }
 
   @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
@@ -44,7 +44,7 @@ export class PromocodeController {
   checkPromoCode(
     @Param('promoCode') promoCode: string,
     @Param('planId') planId: number
-) {
+  ) {
     return this.promocodeService.checkPromoCode(promoCode, planId);
   }
 

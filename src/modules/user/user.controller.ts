@@ -56,10 +56,10 @@ export class UserController {
   async deleteOne(@Param('id') id: number) {
     // Schedule deletion after 14 days
     // cron.schedule('0 0 */14 * *', async () => {
-        await this.userService.deleteUser(id);
+    await this.userService.deleteUser(id);
     // });
     //   cron.schedule('*/2 * * * *', async () => {
-        // await this.userService.deleteUser(id);
+    // await this.userService.deleteUser(id);
     // });
     return "Delete postbet account and associated ayrshare account success";
   }
