@@ -6,6 +6,9 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Admin_UserGuard } from '../../guards/admin-user.guard';
 import { AdminGuard } from '../../guards/admin.guard';
 
+// promocode used only once for user
+// promocode limit of usage
+
 @ApiTags('Promo Code')
 @Controller('promocode')
 export class PromocodeController {
