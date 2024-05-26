@@ -13,12 +13,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService,
   ) { }
 
-  @Get('loginPage')
-  @Render('login')
-  root() {
-    return { message: "hello world!"};
-  }
-
   @Post('/login')
   // @Role(['Admin'])
   //@UseGuards(RolesGuard, )

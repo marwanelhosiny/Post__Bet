@@ -99,14 +99,15 @@ export class AuthService {
         if (!user) {
             throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
         }
+
         if (user.suspended === true) {
             // CUstom Status Code for mobile
             throw new HttpException('User is suspended', 440)
         }
 
-        // if (user.userType !== body.userType) {
-        //     throw new ForbiddenException("Forbidden resource")
-        // }
+        if (user.isActive == false) {
+            throw new HttpException("The User is not active", HttpStatus.BAD_REQUEST)
+        }
 
         if (user.password !== body.password) {
             throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
