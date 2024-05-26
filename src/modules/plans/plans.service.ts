@@ -176,7 +176,8 @@ export class PlansService {
         // }
       },
       merchant: {
-        id: process.env.MERCHANT_ID,
+        // id: process.env.MERCHANT_ID,
+        id: 30634006,
       },
       source: {
         id: 'src_all'
@@ -190,7 +191,8 @@ export class PlansService {
     };
 
     const headers = {
-      Authorization: process.env.SK_PAYTAPS,
+      // Authorization: process.env.SK_PAYTAPS,
+      Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
       Accept: 'application/json',
       'Content-Type': 'application/json'
     };
@@ -210,7 +212,8 @@ export class PlansService {
 
   async confirmPayment(chargeId: string, req): Promise<any> {
     const headers = {
-      Authorization: process.env.SK_PAYTAPS,
+      // Authorization: process.env.SK_PAYTAPS,
+      Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
       Accept: 'application/json'
     };
 
