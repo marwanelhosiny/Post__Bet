@@ -49,7 +49,8 @@ export class UserService extends AbstractService<User> {
       user.firstTime = false;
 
       const createdUser = await this.userRepo.save(user as User);
-      return await this.findObjectById(createdUser.id);
+      // return await this.findObjectById(createdUser.id);
+      return "Admin created successfully"
     } catch (error) {
       if (error.code === '23505') {
         let errorMessage: string;
@@ -162,7 +163,8 @@ export class UserService extends AbstractService<User> {
 
   async deleteUser(id: number) {
     try {
-      const API_KEY = process.env.AYRSHARE_API_KEY;
+      // const API_KEY = process.env.AYRSHARE_API_KEY;
+      const API_KEY = "TH8S6RT-67ZMT2F-HTB3ZSH-PFEAPER"
       const user = await User.findOneBy({ id: id });
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);

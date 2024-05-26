@@ -32,7 +32,7 @@ export class PlansService {
       page: page,
       limit: pageSize
     };
-  
+
     let whereClause = {};
     if (search) {
       whereClause = {
@@ -291,6 +291,7 @@ export class PlansService {
       .leftJoin('subscription.user', 'user')
       .leftJoin('subscription.promocode', 'promocode')
       .addSelect('plan.id')
+      .addSelect('plan.name')
       .addSelect('user.id')
       .addSelect('user.email')
       .addSelect('promocode.id')

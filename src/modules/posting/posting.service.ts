@@ -15,7 +15,8 @@ export class PostingService {
 
     async createUserProfile(user) {
         try {
-            const API_KEY = process.env.AYRSHARE_API_KEY;
+            // const API_KEY = process.env.AYRSHARE_API_KEY;
+            const API_KEY = "TH8S6RT-67ZMT2F-HTB3ZSH-PFEAPER";
             const url = 'https://app.ayrshare.com/api/profiles/profile';
             const data = {
                 // title: req.user.email
@@ -117,7 +118,8 @@ export class PostingService {
     }
 
     async postToAyrshare(addPostDto: AddPostDto, req) {
-        const API_KEY = process.env.AYRSHARE_API_KEY;
+        // const API_KEY = process.env.AYRSHARE_API_KEY;
+        const API_KEY = "TH8S6RT-67ZMT2F-HTB3ZSH-PFEAPER";
         const PROFILE_KEY = (await User.findOne({ where: { id: req.user.id } })).profileKey;
         const url = 'https://app.ayrshare.com/api/post';
 
