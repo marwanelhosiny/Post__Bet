@@ -17,6 +17,7 @@ import { User } from 'src/entities/user.entity';
 @Injectable()
 export class PlansService {
 
+
   constructor(
     @InjectRepository(Plan) private readonly repo: Repository<Plan>,
     public postingService: PostingService,
@@ -40,16 +41,16 @@ export class PlansService {
         name: (search.length > 0) ? ILike(`%${search}%`) : undefined
       };
     }
-  
+
     const paginateOptions: FindManyOptions<Plan> = {
       where: whereClause,
       order: { price: 'ASC' }
     };
-  
+
     if (req.user.userType === UserType.ADMIN) {
       return paginate<Plan>(this.repo, options, paginateOptions);
     }
-  
+
     if (req.user.userType === UserType.USER) {
       whereClause = { ...whereClause, isActive: true };
       paginateOptions.where = whereClause;
@@ -127,7 +128,7 @@ export class PlansService {
       subscription.paymentStatus = PaymentStatus.Free;
       await subscription.save();
       return { message: 'Plan subscribed successfully.' };
-  }
+    }
 
     if (promocode) {
       promocode.usedCounter++;
@@ -286,7 +287,7 @@ export class PlansService {
   async getAllSubscription(page: number, pageSize: number, paymentStatus?: string): Promise<Pagination<UserProgramSubscription>> {
     page = page || 1;
     pageSize = pageSize || 100;
-    
+
     const queryBuilder = UserProgramSubscription
       .createQueryBuilder('subscription')
       .orderBy('subscription.id', 'DESC')
@@ -307,6 +308,28 @@ export class PlansService {
     const pagination = await paginate<UserProgramSubscription>(queryBuilder, { page, limit: pageSize });
     return pagination;
   }
-  
-  
+
+
+  async adminHomePage() {
+
+
+    const card = await UserProgramSubscription
+      .createQueryBuilder('subscription')
+      .leftJoin('subscription.plan','plan')
+      .select('plan.name')
+      .addSelect('COUNT(subscription.id)', 'count')
+      .addSelect('SUM(subscription.finalPrice)', 'totalFinalPrice')
+      .groupBy('plan.name')
+      .getRawMany();
+
+      const dailyStatistics = await UserProgramSubscription
+        .createQueryBuilder('subscription')
+        .select('DATE(subscription.createdAt)', 'date')
+        .addSelect('SUM(subscription.finalPrice)', 'totalFinalPrice')
+        .groupBy('DATE(subscription.createdAt)')
+        .orderBy('DATE(subscription.createdAt)', 'ASC')
+        .getRawMany();
+
+      return {card, dailyStatistics}
+  }
 }

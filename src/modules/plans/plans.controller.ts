@@ -54,6 +54,13 @@ export class PlansController {
     return this.plansService.getAllSubscription(page, pageSize, paymentStatus);
   }
 
+  @UseGuards(AdminGuard)
+  @Get('/adminHomePage')
+  adminHomePage(
+  ) {
+    return this.plansService.adminHomePage();
+  }
+
   @UseGuards(UserGuard)
   @Get('subscribe/confirmPayment/:chargeId')
   confirmPayment(@Param('chargeId') chargeId: string, @Req() req) {
