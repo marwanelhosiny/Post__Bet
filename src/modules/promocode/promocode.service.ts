@@ -3,7 +3,7 @@ import { CreatePromocodeDto } from '../../dtos/create-promocode.dto';
 import { UpdatePromocodeDto } from '../../dtos/update-promocode.dto';
 import { Promocode } from '../../entities/promocode.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, QueryFailedError, Like, ILike } from 'typeorm';
+import { Repository, QueryFailedError, Like, ILike, FindOptionsWhere } from 'typeorm';
 import { UserType } from '../../enums/user-type.enum';
 import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { Plan } from 'src/entities/plan.entity';
@@ -32,29 +32,43 @@ export class PromocodeService {
       page: page,
       limit: pageSize
     };
-    let whereClause = {};
+
+    let whereClause: FindOptionsWhere<Promocode> = {};
+
     if (search) {
       whereClause = {
         ...whereClause,
-        promoCode: (search.length > 0) ? ILike(`%${search}%`) : undefined
+        promoCode: search.length > 0 ? ILike(`%${search}%`) : undefined
       };
     }
+
+    const orderClause = { updatedAt: 'DESC' as const };
+
     if (req.user.userType === UserType.ADMIN) {
-      return paginate<Promocode>(this.repo, options, { where: whereClause });
+      return paginate<Promocode>(this.repo, options, { where: whereClause, order: orderClause });
     }
+
     if (req.user.userType === UserType.USER) {
       whereClause = { ...whereClause, isActive: true };
-      return paginate<Promocode>(this.repo, options, { where: whereClause });
+      return paginate<Promocode>(this.repo, options, { where: whereClause, order: orderClause });
     }
   }
+
 
   async findOne(id: number) {
     return await this.repo.findOne({ where: { id } });
   }
 
   async update(id: number, updatePromocodeDto: UpdatePromocodeDto) {
-    await this.repo.update(id, updatePromocodeDto);
-    return "Promo Code updated successfully";
+    try {
+      await this.repo.update(id, updatePromocodeDto);
+      return "Promo Code updated successfully";
+    } catch (error) {
+      if (error instanceof QueryFailedError && error.message.includes('UQ_b01497d884dc9a1782ec6b60b5')) {
+        throw new HttpException('Promo code of this name already exists', HttpStatus.BAD_REQUEST);
+      }
+      throw error;
+    }
   }
 
   async remove(id: number) {
