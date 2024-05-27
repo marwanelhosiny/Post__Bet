@@ -20,12 +20,13 @@ export class UserService extends AbstractService<User> {
   }
 
   async onModuleInit() {
-    const adminsCount = await this.userRepo.count({ where: { email: 'admin@gmail.com' } })
+    const adminsCount = await this.userRepo.count({ where: { email: 'admin@postbet.com' } })
     // const role = await this.roleService.repository.findOneBy({ name: 'Admin' })
 
     if (adminsCount === 0) {
       const newAdmin: Partial<User> = {
-        email: 'admin@gmail.com',
+        name: 'Admin',
+        email: 'admin@postbet.com',
         password: '123456789',
         isActive: true,
         profileImage: '',
