@@ -312,24 +312,26 @@ export class PlansService {
 
   async adminHomePage() {
 
-
     const card = await UserProgramSubscription
       .createQueryBuilder('subscription')
-      .leftJoin('subscription.plan','plan')
+      .leftJoin('subscription.plan', 'plan')
       .select('plan.name')
       .addSelect('COUNT(subscription.id)', 'count')
       .addSelect('SUM(subscription.finalPrice)', 'totalFinalPrice')
+      .where('subscription.paymentStatus = :status', { status: 'Paid' })
       .groupBy('plan.name')
       .getRawMany();
-
-      const dailyStatistics = await UserProgramSubscription
-        .createQueryBuilder('subscription')
-        .select('DATE(subscription.createdAt)', 'date')
-        .addSelect('SUM(subscription.finalPrice)', 'totalFinalPrice')
-        .groupBy('DATE(subscription.createdAt)')
-        .orderBy('DATE(subscription.createdAt)', 'ASC')
-        .getRawMany();
-
-      return {card, dailyStatistics}
+  
+    const dailyStatistics = await UserProgramSubscription
+      .createQueryBuilder('subscription')
+      .select('DATE(subscription.createdAt)', 'date')
+      .addSelect('SUM(subscription.finalPrice)', 'totalFinalPrice')
+      .where('subscription.paymentStatus = :status', { status: 'Paid' })
+      .groupBy('DATE(subscription.createdAt)')
+      .orderBy('DATE(subscription.createdAt)', 'ASC')
+      .getRawMany();
+  
+    return { card, dailyStatistics };
   }
+  
 }
