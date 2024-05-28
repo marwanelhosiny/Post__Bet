@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { OBaseEntity } from "../generic/base.entity";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, ManyToMany } from "typeorm";
+import { User } from "./user.entity";
 
 
 @Entity()
-export class Promocode extends  OBaseEntity {
+export class Promocode extends OBaseEntity {
 
     @ApiProperty()
     @Column({ unique: true })
@@ -19,9 +20,14 @@ export class Promocode extends  OBaseEntity {
     isActive?: boolean;
 
     @ApiProperty()
-    @Column({ default: 0})
+    @Column({ default: 0 })
     usedCounter: number;
 
+    @ApiProperty()
+    @Column({ default: 0 })
+    numberOfUses: number;
 
-    // add constrain in entity to get onlly objects where isActive ==true
+    @ManyToMany(() => User, user => user.promocode)
+    user?: User[];
+
 }

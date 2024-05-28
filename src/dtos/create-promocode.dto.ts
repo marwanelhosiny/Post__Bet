@@ -13,5 +13,11 @@ export class CreatePromocodeDto {
     percentage: number;
 
     @ApiProperty()
+    @IsInt()
+    @Min(0)
+    // @Max(100)
+    numberOfUses: number;
+
+    @ApiProperty()
     isActive: boolean;
 }

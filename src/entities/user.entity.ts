@@ -1,9 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Entity, Column, OneToMany, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, OneToMany, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { OBaseEntity } from '../generic/base.entity';
 import { SUtils } from '../shared/utils';
 import { UserType } from '../enums/user-type.enum';
 import { UserProgramSubscription } from './subscription.entity';
+import { Promocode } from './promocode.entity';
 
 @Entity()
 export class User extends OBaseEntity {
@@ -85,4 +86,8 @@ export class User extends OBaseEntity {
 
     @OneToMany(() => UserProgramSubscription, userProgramSubscriptions => userProgramSubscriptions.user)
     userProgramSubscriptions?: UserProgramSubscription[];
+
+    @JoinTable({})
+    @ManyToMany(()=>Promocode, promocode => promocode.user)
+    promocode?: Promocode[]
 }

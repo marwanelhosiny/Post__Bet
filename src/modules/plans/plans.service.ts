@@ -94,12 +94,21 @@ export class PlansService {
 
     let promocode = null;
     if (planSubscripeDto.promoCode) {
-      promocode = await Promocode.findOne({ where: { promoCode: planSubscripeDto.promoCode } });
+      promocode = await Promocode.findOne({ where: { promoCode: planSubscripeDto.promoCode }, relations: ['user'] });
       if (!promocode) {
         throw new HttpException('This Promo code does not exist', HttpStatus.BAD_REQUEST);
       }
       if (!promocode.isActive) {
         throw new HttpException('This Promo code is not Active', HttpStatus.BAD_REQUEST);
+      }
+      if (promocode.numberOfUses <= promocode.usedCounter) {
+        throw new HttpException('This Promo Exceed Number of Uses', HttpStatus.BAD_REQUEST);
+      }
+
+      // Check if the user has already used this promo code
+      const existingUse = promocode.user?.some(user => user.id === req.user.id);
+      if (existingUse) {
+        throw new HttpException('Promo code is used before', HttpStatus.BAD_REQUEST);
       }
     }
 
@@ -108,7 +117,7 @@ export class PlansService {
       discount = (promocode.percentage / 100) * plan.price;
     }
 
-    const vatAmount = (plan.vat / 100) * (plan.price - discount)
+    const vatAmount = (plan.vat / 100) * (plan.price - discount);
     const finalPrice = plan.price - discount + vatAmount;
 
     const subscription = new UserProgramSubscription();
@@ -132,6 +141,7 @@ export class PlansService {
 
     if (promocode) {
       promocode.usedCounter++;
+      promocode.user = promocode.user ? [...promocode.user, req.user] : [req.user];
       await promocode.save();
     }
 
@@ -146,6 +156,8 @@ export class PlansService {
 
     return { transactionUrl, chargeId };
   }
+
+
 
   async createCharge(finalPrice, user) {
     const data = {
@@ -321,7 +333,7 @@ export class PlansService {
       .where('subscription.paymentStatus = :status', { status: 'Paid' })
       .groupBy('plan.name')
       .getRawMany();
-  
+
     const dailyStatistics = await UserProgramSubscription
       .createQueryBuilder('subscription')
       .select('DATE(subscription.createdAt)', 'date')
@@ -330,8 +342,8 @@ export class PlansService {
       .groupBy('DATE(subscription.createdAt)')
       .orderBy('DATE(subscription.createdAt)', 'ASC')
       .getRawMany();
-  
+
     return { card, dailyStatistics };
   }
-  
+
 }
