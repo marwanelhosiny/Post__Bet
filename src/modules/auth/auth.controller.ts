@@ -6,6 +6,7 @@ import { ChangePasswordDto } from '../../dtos/change-password.dto';
 import { MailService } from '../mail/mail.service';
 import { ChangeForgetPasswordDto, ForgetPasswordEmailDto, VerifyOtpDto } from '../../dtos/auth.dto';
 import { UserGuard } from '../../guards/user.guard';
+import { Admin_UserGuard } from 'src/guards/admin-user.guard';
 
 @ApiTags('Auth')
 @Controller('Auth')
@@ -31,7 +32,8 @@ export class AuthController {
     return await this.authService.verifyAccountOnSignUp(user);
   }
 
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
+  @UseGuards(Admin_UserGuard)
   @Post('change-password')
   async changePassword(@Body() body: ChangePasswordDto, @Req() req) {
     return this.authService.changePassword(req, body);
@@ -50,21 +52,5 @@ export class AuthController {
   @Post('change-forget-password')
   async changeForgetPassword(@Body() body: ChangeForgetPasswordDto) {
     return this.authService.changeForgetPassword(body)
-  }
-
-
-  
+  } 
 }
-
-
-///////////payment integration
-//////////ayshare integration
-//////////find way to post on snapchat
-
-
-
-
-/////////// signup --->> add client token
-
-////// about us dynamic
-///// user deleted imedtially

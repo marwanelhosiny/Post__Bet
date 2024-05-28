@@ -195,15 +195,16 @@ export class AuthService {
         );
 
         if (userDb.password === body.newPassword) {
-            throw new HttpException("This password is used before", 500);
+            throw new HttpException("This password is used before", HttpStatus.BAD_REQUEST);
         }
 
         if (userDb.password === body.oldPassword) {
             let userStored = await this.userService.update(userDb.id, { password: body.newPassword });
             delete userStored.password;
-            return this.sign(userStored);
+            // return this.sign(userStored);
+            return "Password Updated Successfully";
         }
-        throw new HttpException("Incorrect password", 500);
+        throw new HttpException("Old Password is not correct", HttpStatus.BAD_REQUEST);
     }
 
 
