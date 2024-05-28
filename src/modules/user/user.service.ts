@@ -46,6 +46,7 @@ export class UserService extends AbstractService<User> {
       // let newRole = await this.getOrCreateRole(createUserDto.role);
       // user.role = { id: newRole.id } as Role;
       user.haveAccount = true;
+      user.isActive = true;
       user.userType = UserType.ADMIN;
       user.firstTime = false;
 
