@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, UsePipes, ValidationPipe, Render } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from '../../dtos/create-plan.dto';
 import { UpdatePlanDto } from '../../dtos/update-plan.dto';
@@ -61,10 +61,17 @@ export class PlansController {
     return this.plansService.adminHomePage();
   }
 
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
   @Get('subscribe/confirmPayment/:chargeId')
   confirmPayment(@Param('chargeId') chargeId: string, @Req() req) {
     return this.plansService.confirmPayment(chargeId, req)
+  }
+
+  @Get('subscribe/renderConfirmPayment')
+  @Render('confirm-payment')
+  renderConfirmPayment(
+  ) {
+   
   }
 
   @Get(':id')

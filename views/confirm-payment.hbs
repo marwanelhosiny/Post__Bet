@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Confirm Payment</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Confirm Payment</h2>
+        <div id="paymentStatus"></div>
+    </div>
+
+    <script>
+        function confirmPayment(chargeId) {
+            fetch(`http://localhost:4000/plans/subscribe/confirmPayment/${chargeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Display custom message
+                        document.getElementById('paymentStatus').innerText = 'Payment Done';
+                    } else {
+                        {{!-- document.getElementById('paymentS/tatus').innerText = JSON.stringify(data); --}}
+                        document.getElementById('paymentStatus').innerText = 'Payment Done';
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('paymentStatus').innerText = 'Payment confirmation failed';
+                });
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const chargeId = urlParams.get('tap_id');
+            if (chargeId) {
+                confirmPayment(chargeId);
+            } else {
+                document.getElementById('paymentStatus').innerText = 'No Charge ID provided';
+            }
+        };
+    </script>
+</body>
+</html>

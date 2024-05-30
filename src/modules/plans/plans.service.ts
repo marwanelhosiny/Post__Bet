@@ -199,7 +199,8 @@ export class PlansService {
         url: 'https://www.google.com/'
       },
       redirect: {
-        url: 'https://www.google.com/'
+        // url: 'https://www.google.com/'
+        url: process.env.REDIRECT_URL
       }
     };
 
@@ -247,10 +248,6 @@ export class PlansService {
         await UserProgramSubscription.update({ chargeId: chargeId }, { paymentStatus: PaymentStatus.Pending })
       }
 
-      // const profileKey =  (await User.findOne({where:{id : req.user.id}})).profileKey
-      // if (!profileKey){
-      //   await this.postingService.createUserProfile(req)
-      // }
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
