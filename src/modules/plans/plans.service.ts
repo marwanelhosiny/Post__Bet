@@ -200,7 +200,8 @@ export class PlansService {
       },
       redirect: {
         // url: 'https://www.google.com/'
-        url: process.env.REDIRECT_URL
+        // url: process.env.REDIRECT_URL,
+        url: 'http://195.35.0.65:4000/plans/subscribe/renderConfirmPayment',
       }
     };
 
