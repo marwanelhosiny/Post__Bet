@@ -137,32 +137,23 @@ export class UserService extends AbstractService<User> {
 
 
   async updateUser(id, body) {
-    try {
+    
       let existsRecord = await this.findOneBy({ id: id });
+
+      if (id == 1) {
+        throw new HttpException('Cannot make a change in Super Admin.', HttpStatus.BAD_REQUEST);
+      }
+
       body.updatedAt = new Date();
       existsRecord.firstTime = false;
       existsRecord.isActive = true;
-      existsRecord = Object.assign(existsRecord, body)
-      // User.merge(existsRecord, body);
-      let updateResult = await this.save(existsRecord);
-      return existsRecord;
-    }
+      existsRecord = Object.assign(existsRecord, body);
 
-    catch (error) {
-      if (error.code === '23505') {
-        let errorMessage: string;
-        if (error.detail.includes('email')) {
-          errorMessage = 'Email already exists.';
-        } else if (error.detail.includes('mobile')) {
-          errorMessage = 'Mobile number already exists.';
-        } else {
-          errorMessage = 'Duplicate key value violates unique constraint.';
-        }
-        throw new HttpException(errorMessage, HttpStatus.CONFLICT);
-      }
+       await this.save(existsRecord);
+      return "User Updated Successfully";
     }
-  }
-
+    
+  
   async deleteUser(id: number) {
     try {
       // const API_KEY = process.env.AYRSHARE_API_KEY;
@@ -172,9 +163,9 @@ export class UserService extends AbstractService<User> {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
       const PROFILE_KEY = user.profileKey;
-  
+
       const url = 'https://app.ayrshare.com/api/profiles';
-  
+
       const response = await axios.delete(`${url}`, {
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
@@ -182,10 +173,10 @@ export class UserService extends AbstractService<User> {
           'Profile-Key': PROFILE_KEY
         }
       });
-  
+
       console.log('Response:', response.data);
       await this.repository.delete(id);
-  
+
       return response.data;
     } catch (error) {
       console.error('Error:', error.response ? error.response.data : error);
