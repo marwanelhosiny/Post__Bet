@@ -20,6 +20,7 @@ import { MailService } from '../mail/mail.service';
 import { ChangeForgetPasswordDto, VerifyOtpDto } from '../../dtos/auth.dto';
 import { SUtils } from '../../shared/utils';
 import { PostingService } from '../posting/posting.service';
+import { UserProgramSubscription } from 'src/entities/subscription.entity';
 
 
 @Injectable()
@@ -31,16 +32,14 @@ export class AuthService {
         public postingService: PostingService
     ) { }
 
-    sign(user: User) {
+    sign(user: User): any {
         return {
             ...user,
-            token: this.jwtService.sign(
-                {
-                    id: user.id,
-                    email: user.email,
-                    userType: user.userType
-                },
-            ),
+            token: this.jwtService.sign({
+                id: user.id,
+                email: user.email,
+                userType: user.userType,
+            }),
         };
     }
 
@@ -93,8 +92,18 @@ export class AuthService {
         let user = await this.userService.repository
             .createQueryBuilder('user')
             .addSelect('user.password')
+            .leftJoin('user.userProgramSubscriptions', 'Subscriptions')
+            .addSelect('Subscriptions.id')
+            .addSelect('Subscriptions.paymentStatus')
+            .addSelect('Subscriptions.startDayPlanSubscription')
+            .addSelect('Subscriptions.planUsedCounter')
+            .orderBy('Subscriptions.id', 'ASC')
+            .leftJoin('Subscriptions.plan', 'plan')
+            .addSelect('plan.id')
+            .addSelect('plan.name')
             .where('user.email = :email', { email })
             .getOne();
+
 
         if (!user) {
             throw new HttpException('Check your credentials', HttpStatus.BAD_REQUEST)
@@ -117,6 +126,11 @@ export class AuthService {
             throw new HttpException('Verify Your Email First', HttpStatus.BAD_REQUEST)
         }
 
+        // const subscriptions = await UserProgramSubscription.find({
+        //     where: { user: user },
+        //   });
+
+
         user.lastLoginTime = new Date();
         // Update user
         await this.userService.repository
@@ -128,7 +142,9 @@ export class AuthService {
 
         delete user.password
 
-        return this.sign(user);
+        return this.sign(user,
+            // subscriptions
+        );
     }
 
     async signUp(body: SignUpDto) {
