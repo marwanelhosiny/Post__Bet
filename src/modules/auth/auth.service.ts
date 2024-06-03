@@ -101,6 +101,14 @@ export class AuthService {
             .leftJoin('Subscriptions.plan', 'plan')
             .addSelect('plan.id')
             .addSelect('plan.name')
+            .addSelect('plan.Facebook')
+            .addSelect('plan.Instagram')
+            .addSelect('plan.LinkedIn')
+            .addSelect('plan.Twitter')
+            .addSelect('plan.Telegram')
+            .addSelect('plan.TikTok')
+            .addSelect('plan.Pinterest')
+            .addSelect('plan.Reddit')
             .where('user.email = :email', { email })
             .getOne();
 
