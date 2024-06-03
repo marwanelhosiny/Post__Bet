@@ -13,10 +13,26 @@ import { ValidationExceptionFilter } from './shared/validation-exception.filter'
 import * as hbs from 'hbs';
 import * as hbsUtils from 'hbs-utils';
 
+// Added the fs import to read certificate and key files
+import * as fs from 'fs';
+
+
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Added httpsOptions to specify the paths to the self-signed certificate and key files
+  const httpsOptions = {
+    key: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.key'),
+    cert: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.pem'),
+  };
+
+  // Modified the NestFactory.create call to include httpsOptions for HTTPS setup
+  const app = await NestFactory.create<NestExpressApplication>(AppModule,
+    {
+      httpsOptions,
+    }
+  );
 
   app.enableCors();
 
@@ -33,6 +49,7 @@ async function bootstrap() {
   // app.engine('hbs', hbs({ extname: 'hbs' }));
 
 
+  //we can change the port in env to 443 if you want the domain to appear without :port after it
   const PORT = process.env.PORT || 8080;
 
   const options = new DocumentBuilder()
