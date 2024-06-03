@@ -18,12 +18,12 @@
             {{!-- fetch(`https://postbet.ae/plans/subscribe/confirmPayment/${chargeId}`) --}}
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message) {
+                    if (data.data && data.data.status === "CAPTURED") {
                         // Display custom message
                         document.getElementById('paymentStatus').innerText = 'Payment Done';
                     } else {
                         {{!-- document.getElementById('paymentS/tatus').innerText = JSON.stringify(data); --}}
-                        document.getElementById('paymentStatus').innerText = 'Payment Done';
+                        document.getElementById('paymentStatus').innerText = 'Payment Failed';
 
                     }
                 })
