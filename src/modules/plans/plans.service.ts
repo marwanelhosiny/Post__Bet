@@ -189,8 +189,8 @@ export class PlansService {
         // }
       },
       merchant: {
-        // id: process.env.MERCHANT_ID,
-        id: 30634006,
+        id: process.env.MERCHANT_ID,
+        // id: 30634006,
       },
       source: {
         id: 'src_all'
@@ -200,15 +200,15 @@ export class PlansService {
       },
       redirect: {
         // url: 'https://www.google.com/'
-        // url: process.env.REDIRECT_URL,
+        url: process.env.REDIRECT_URL,
         // url: 'http://localhost:4000/plans/subscribe/renderConfirmPayment',
-        url: 'https://195.35.0.65:4000/plans/subscribe/renderConfirmPayment',
+        // url: 'https://195.35.0.65:4000/plans/subscribe/renderConfirmPayment',
       }
     };
 
     const headers = {
-      // Authorization: process.env.SK_PAYTAPS,
-      Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
+      Authorization: process.env.SK_PAYTAPS,
+      // Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
       Accept: 'application/json',
       'Content-Type': 'application/json'
     };
@@ -228,8 +228,8 @@ export class PlansService {
 
   async confirmPayment(chargeId: string, req): Promise<any> {
     const headers = {
-      // Authorization: process.env.SK_PAYTAPS,
-      Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
+      Authorization: process.env.SK_PAYTAPS,
+      // Authorization: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
       Accept: 'application/json'
     };
 
