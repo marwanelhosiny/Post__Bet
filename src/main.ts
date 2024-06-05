@@ -23,8 +23,8 @@ async function bootstrap() {
 
   // Added httpsOptions to specify the paths to the self-signed certificate and key files
   const httpsOptions = {
-    key: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.key'),
-    cert: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.pem'),
+    key: fs.readFileSync('/root/.acme.sh/postbet.ae_ecc/postbet.ae.key'),
+    cert: fs.readFileSync('/root/.acme.sh/postbet.ae_ecc/postbet.ae.cer'),
   };
 
   // Modified the NestFactory.create call to include httpsOptions for HTTPS setup
