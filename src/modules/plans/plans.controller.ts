@@ -38,7 +38,7 @@ export class PlansController {
   @UseGuards(UserGuard)
   @Get('/mySubscribtions')
   mySubscribtion(@Req() req){
-    return this.plansService.mySubscribtion(req)
+    return this.plansService.mySubscription(req)
   }
 
   @UseGuards(AdminGuard)

@@ -265,10 +265,10 @@ export class PlansService {
   }
 
 
-  async mySubscribtion(req: any) {
+  async mySubscription(req: any) {
     const today = new Date();
     const userId = req.user.id;
-    return await UserProgramSubscription
+    const subscriptions = await UserProgramSubscription
       .createQueryBuilder('subscription')
       .leftJoin('subscription.plan', 'plan')
       .leftJoin('subscription.user', 'user')
@@ -295,8 +295,24 @@ export class PlansService {
       .addSelect('plan.Reddit')
       .addSelect('plan.YouTube')
       .addSelect('plan.GoogleBusiness')
-      .getMany()
-  }
+      .getMany();
+
+    const updatedSubscriptions = subscriptions.map(subscription => {
+        const startDay = new Date(subscription.startDayPlanSubscription);
+        const endSubscriptionDate = new Date(startDay.getTime() + 30 * 24 * 60 * 60 * 1000); // Adding 30 days
+        return {
+            ...subscription,
+            endSubscriptionDate: endSubscriptionDate.toISOString().split('T')[0] // Convert back to string
+        };
+    });
+
+    return {
+        success: true,
+        status: 200,
+        data: updatedSubscriptions
+    };
+}
+
 
 
 
