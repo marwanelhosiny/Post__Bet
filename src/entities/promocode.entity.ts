@@ -27,7 +27,10 @@ export class Promocode extends OBaseEntity {
     @Column({ default: 0 })
     numberOfUses: number;
 
+    @ApiProperty()
+    @Column({ type: 'timestamp', nullable: true })
+    expirationDate?: Date;
+
     @ManyToMany(() => User, user => user.promocode)
     user?: User[];
-
 }

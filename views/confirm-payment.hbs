@@ -2,29 +2,51 @@
 <html lang="en">
 <head>
     <title>Confirm Payment</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        #paymentStatus {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .return-message {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h2>Confirm Payment</h2>
         <div id="paymentStatus"></div>
+        <div class="return-message" id="returnMessage"></div>
     </div>
 
     <script>
         function confirmPayment(chargeId) {
             {{!-- fetch(`http://localhost:4000/plans/subscribe/confirmPayment/${chargeId}`) --}}
-            fetch(`https://post-bet.onrender.com/plans/subscribe/confirmPayment/${chargeId}`)
+            {{!-- fetch(`https://post-bet.onrender.com/plans/subscribe/confirmPayment/${chargeId}`) --}}
             {{!-- fetch(`http://195.35.0.65:4000/plans/subscribe/confirmPayment/${chargeId}`) --}}
             {{!-- fetch(`https://195.35.0.65:4000/plans/subscribe/confirmPayment/${chargeId}`) --}}
-            {{!-- fetch(`https://postbet.ae/plans/subscribe/confirmPayment/${chargeId}`) --}}
+            fetch(`https://postbet.ae/plans/subscribe/confirmPayment/${chargeId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.data && data.data.status === "CAPTURED") {
                         // Display custom message
                         document.getElementById('paymentStatus').innerText = 'Payment Done';
+                        document.getElementById('returnMessage').innerText = 'Kindly get back to the application.';
                     } else {
-                        {{!-- document.getElementById('paymentS/tatus').innerText = JSON.stringify(data); --}}
                         document.getElementById('paymentStatus').innerText = 'Payment Failed';
-
                     }
                 })
                 .catch(error => {

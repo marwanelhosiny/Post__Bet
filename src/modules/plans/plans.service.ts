@@ -104,6 +104,9 @@ export class PlansService {
       if (promocode.numberOfUses <= promocode.usedCounter) {
         throw new HttpException('This Promo Exceed Number of Uses', HttpStatus.BAD_REQUEST);
       }
+      if (promocode.expirationDate && promocode.expirationDate < new Date()) {
+        throw new HttpException('This Promo Code Expired', HttpStatus.BAD_REQUEST);
+      }
 
       // Check if the user has already used this promo code
       const existingUse = promocode.user?.some(user => user.id === req.user.id);

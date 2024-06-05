@@ -13,7 +13,7 @@ module.exports = {
                 DB_PORT: 5432,
                 DB_NAME: "Postbet",
                 DB_SSL: true,
-                REDIRECT_URL: "https://post-bet.onrender.com/plans/subscribe/renderConfirmPayment",
+                REDIRECT_URL: "https://postbet.ae/plans/subscribe/renderConfirm",
                 MAIL_HOST: "smtp.gmail.com",
                 SMTP_USERNAME: "husseinfayed86@gmail.com",
                 SMTP_PASSWORD: "kclf dmaa aaqf hmik",

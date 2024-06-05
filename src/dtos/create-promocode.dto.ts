@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, Max, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsInt, Max, Min } from "class-validator";
 
 export class CreatePromocodeDto {
 
@@ -17,6 +18,11 @@ export class CreatePromocodeDto {
     @Min(0)
     // @Max(100)
     numberOfUses: number;
+    
+    @ApiProperty()
+    @IsDate()
+    @Type(() => Date)
+    expirationDate: Date;
 
     @ApiProperty()
     isActive: boolean;

@@ -22,15 +22,15 @@ dotenv.config();
 async function bootstrap() {
 
   // Added httpsOptions to specify the paths to the self-signed certificate and key files
-  // const httpsOptions = {
-  //   key: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.key'),
-  //   cert: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.pem'),
-  // };
+  const httpsOptions = {
+    key: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.key'),
+    cert: fs.readFileSync('/etc/ssl/nestjs/ssl-cert-snakeoil.pem'),
+  };
 
   // Modified the NestFactory.create call to include httpsOptions for HTTPS setup
   const app = await NestFactory.create<NestExpressApplication>(AppModule,
     {
-      // httpsOptions,
+      httpsOptions,
     }
   );
 
