@@ -293,6 +293,8 @@ export class PlansService {
       .addSelect('plan.TikTok')
       .addSelect('plan.Pinterest')
       .addSelect('plan.Reddit')
+      .addSelect('plan.YouTube')
+      .addSelect('plan.GoogleBusiness')
       .getMany()
   }
 

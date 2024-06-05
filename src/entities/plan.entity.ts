@@ -74,6 +74,14 @@ export class Plan extends OBaseEntity{
     @Column({ default: false })
     Reddit?: boolean;
 
+    @ApiProperty()
+    @Column({ default: false })
+    YouTube?: boolean;
+
+    @ApiProperty()
+    @Column({ default: false })
+    GoogleBusiness?: boolean;
+
     @OneToMany(() => UserProgramSubscription, subscription => subscription.plan)
     userProgramSubscriptions: UserProgramSubscription[];
 

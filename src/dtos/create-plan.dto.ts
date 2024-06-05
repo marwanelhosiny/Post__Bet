@@ -64,4 +64,10 @@ export class CreatePlanDto {
     @ApiProperty()
     Twitter?: boolean;
 
+    @ApiProperty()
+    YouTube?: boolean;
+
+    @ApiProperty()
+    GoogleBusiness?: boolean;
+
 }

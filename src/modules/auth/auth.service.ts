@@ -109,6 +109,8 @@ export class AuthService {
             .addSelect('plan.TikTok')
             .addSelect('plan.Pinterest')
             .addSelect('plan.Reddit')
+            .addSelect('plan.YouTube')
+            .addSelect('plan.GoogleBusiness')
             .where('user.email = :email', { email })
             .getOne();
 
