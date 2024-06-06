@@ -131,8 +131,10 @@ export class PostingService {
                 faceBookOptions: addPostDto.faceBookOptions,
                 instagramOptions: addPostDto.instagramOptions,
                 isVideo: addPostDto.isVideo,
-                youTubeOptions: addPostDto.youtubeOptions
+                youTubeOptions: addPostDto.youTubeOptions
             };
+
+            console.log('afnrkejjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjs',url,data)
 
             const response = await axios.post(url, JSON.stringify(data), {
                 headers: {
@@ -141,6 +143,8 @@ export class PostingService {
                     'Profile-Key': PROFILE_KEY
                 }
             });
+
+            
 
             return response.data;
         } catch (error) {

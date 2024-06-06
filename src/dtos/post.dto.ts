@@ -34,7 +34,7 @@ class InstagramOptions {
     thumbNailOffset: number
 }
 
-class YouTubeOtions {
+class YouTubeOptions {
     @ApiProperty({ required: true })
     title: string
 
@@ -100,7 +100,7 @@ export class AddPostDto {
 
     @ApiProperty({ required: false })
     @IsOptional()
-    youtubeOptions?: YouTubeOtions;
+    youTubeOptions?: YouTubeOptions;
 
     @ApiProperty()
     isVideo: boolean
