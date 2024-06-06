@@ -34,6 +34,38 @@ class InstagramOptions {
     thumbNailOffset: number
 }
 
+class YouTubeOtions {
+    @ApiProperty({ required: true })
+    title: string
+
+    @ApiProperty({ required: false })
+    visibility: string
+
+    @ApiProperty({ required: false })
+    thumbNail: string
+
+    @ApiProperty({ required: false })
+    playListId: string
+
+    @ApiProperty({ required: false })
+    tags: [string]
+
+    @ApiProperty({ required: false })
+    madeForKids: boolean
+
+    @ApiProperty({ required: false })
+    shorts: boolean
+
+    @ApiProperty({ required: false })
+    notifySubscribers: boolean
+
+    @ApiProperty({ required: false })
+    categoryId: number
+
+    @ApiProperty({ required: false })
+    publishAt: string
+}
+
 export class AddPostDto {
 
     @ApiProperty()
@@ -65,6 +97,10 @@ export class AddPostDto {
     @ApiProperty({ required: false })
     @IsOptional()
     instagramOptions?: InstagramOptions;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    youtubeOptions?: YouTubeOtions;
 
     @ApiProperty()
     isVideo: boolean

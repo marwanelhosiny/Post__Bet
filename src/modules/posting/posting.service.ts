@@ -131,6 +131,7 @@ export class PostingService {
                 faceBookOptions: addPostDto.faceBookOptions,
                 instagramOptions: addPostDto.instagramOptions,
                 isVideo: addPostDto.isVideo,
+                youTubeOptions: addPostDto.youtubeOptions
             };
 
             const response = await axios.post(url, JSON.stringify(data), {
