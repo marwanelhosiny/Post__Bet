@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Render, Req, UseGuards } from '@nestjs/common';
 import { PostingService } from './posting.service';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -24,4 +24,9 @@ export class  PostingController {
     @Body() addPostDto: AddPostDto, @Req() req){
     return this.postingService.addPost(subscriptionId,req, addPostDto);
   }
+
+  @Get('/platformConfirmation')
+  @Render('confirm-platform')
+  renderConfirmPayment(
+  ) {}
 }

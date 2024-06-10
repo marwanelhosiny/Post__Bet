@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{!-- <title>Payment Confirmation</title> --}}
+    <meta charset="UTF-8">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        #paymentStatus {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .return-message {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {{!-- <h2>Platform Confirm</h2> --}}
+        <div id="paymentStatus"></div>
+        <div class="return-message" id="returnMessage">
+            تم ربط الحسابات بنجاح<br>برجاء العودة للتطبيق
+        </div>
+    </div>
+</body>
+</html>
