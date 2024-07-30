@@ -67,12 +67,15 @@ export class PlansController {
     return this.plansService.confirmPayment(chargeId, req)
   }
 
-  @Get('subscribe/renderConfirmPayment')
+  //@Get('subscribe/renderConfirmPayment')
+  @Get('subscribe/renderConfirm')
   @Render('confirm-payment')
   renderConfirmPayment(
   ) {
    
   }
+
+  
 
   @Get(':id')
   findOne(@Param('id') id: string) {
