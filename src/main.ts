@@ -12,6 +12,8 @@ import * as dotenv from 'dotenv';
 import { ValidationExceptionFilter } from './shared/validation-exception.filter';
 import * as hbs from 'hbs';
 import * as hbsUtils from 'hbs-utils';
+import { json, urlencoded } from 'express';
+
 
 // Added the fs import to read certificate and key files
 import * as fs from 'fs';
@@ -23,8 +25,8 @@ async function bootstrap() {
 
   // Added httpsOptions to specify the paths to the self-signed certificate and key files
   const httpsOptions = {
-    key: fs.readFileSync('/root/.acme.sh/postbet.ae_ecc/postbet.ae.key'),
-    cert: fs.readFileSync('/root/.acme.sh/postbet.ae_ecc/postbet.ae.cer'),
+    key: fs.readFileSync('/etc/letsencrypt/live/postbet.ae/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/postbet.ae/fullchain.pem'),
   };
 
   // Modified the NestFactory.create call to include httpsOptions for HTTPS setup
@@ -37,6 +39,8 @@ async function bootstrap() {
   app.enableCors();
 
   // app.use(helmet());
+  app.use(json({ limit: '50mb' })); // For JSON payloads
+  app.use(urlencoded({ extended: true, limit: '50mb' })); // For form data
 
   app.use(morgan('dev'));
   app.useGlobalFilters(new ValidationExceptionFilter());

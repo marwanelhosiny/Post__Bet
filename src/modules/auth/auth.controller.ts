@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LoginDto, LoginEmailDto, SignUpDto, verifyOtpDto } from '../../dtos/user.dto';
 import { ChangePasswordDto } from '../../dtos/change-password.dto';
 import { MailService } from '../mail/mail.service';
-import { ChangeForgetPasswordDto, ForgetPasswordEmailDto, VerifyOtpDto } from '../../dtos/auth.dto';
+import { ChangeForgetPasswordDto, ForgetPasswordEmailDto, ResendOtpDto, VerifyOtpDto } from '../../dtos/auth.dto';
 import { UserGuard } from '../../guards/user.guard';
 import { Admin_UserGuard } from 'src/guards/admin-user.guard';
 
@@ -51,6 +51,12 @@ export class AuthController {
 
   @Post('change-forget-password')
   async changeForgetPassword(@Body() body: ChangeForgetPasswordDto) {
+    console.log()
     return this.authService.changeForgetPassword(body)
   } 
+
+  @Post('resend-otp')
+  async resendOtp(@Body() body: ResendOtpDto) {
+    return this.authService.resendOtp(body);
+  }
 }

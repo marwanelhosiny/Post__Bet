@@ -1,7 +1,7 @@
 import { ApiHideProperty, ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import { User } from "../entities/user.entity";
 import { UserType } from "../enums/user-type.enum";
-import { IsEmail } from "class-validator";
+import { IsEmail, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDto {
 
@@ -25,6 +25,36 @@ export class UpdateUserDto {
 
     @ApiProperty()
     profileImage: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    facebookUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    twitterUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    instagramUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    youtubeUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    tiktokUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    snapchatUrl?: string;
 }
 
 export class LoginDto {
@@ -49,6 +79,38 @@ export class SignUpDto {
 
     @ApiProperty()
     password: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    facebookUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    twitterUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    instagramUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    youtubeUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    tiktokUrl?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    snapchatUrl?: string;
+
+
 }
 
 

@@ -3,6 +3,7 @@ module.exports = {
         {
             name: "main",
             script: "dist/main.js",
+            node_args: "--max-old-space-size=4096",
             env: {
                 NODE_ENV: "production",
                 AYRSHARE_API_KEY: "TH8S6RT-67ZMT2F-HTB3ZSH-PFEAPER",
@@ -17,7 +18,7 @@ module.exports = {
                 MAIL_HOST: "smtp.gmail.com",
                 SMTP_USERNAME: "husseinfayed86@gmail.com",
                 SMTP_PASSWORD: "kclf dmaa aaqf hmik",
-                SK_PAYTAPS: "Bearer sk_live_kdhx6S9KfY0l5ZBL8aGCQRDy",
+                SK_PAYTAPS: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
                 MERCHANT_ID: 30634006,
             },
         },

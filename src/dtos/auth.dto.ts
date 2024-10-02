@@ -21,3 +21,7 @@ export class ForgetPasswordEmailDto {
     email: string;
 }
 
+export class ResendOtpDto {
+    @ApiProperty()
+    email: string;
+}

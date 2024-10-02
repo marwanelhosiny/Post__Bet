@@ -17,7 +17,7 @@ import axios from 'axios';
 import { UserType } from '../../enums/user-type.enum';
 import * as speakeasy from 'speakeasy';
 import { MailService } from '../mail/mail.service';
-import { ChangeForgetPasswordDto, VerifyOtpDto } from '../../dtos/auth.dto';
+import { ChangeForgetPasswordDto, VerifyOtpDto, ResendOtpDto } from '../../dtos/auth.dto';
 import { SUtils } from '../../shared/utils';
 import { PostingService } from '../posting/posting.service';
 import { UserProgramSubscription } from 'src/entities/subscription.entity';
@@ -45,6 +45,7 @@ export class AuthService {
 
     async verifyAccountOnSignUp(body: verifyOtpDto) {
         const user = await User.findOneBy({ email: body.email });
+
 
         if (!user) {
             throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -92,6 +93,12 @@ export class AuthService {
         let user = await this.userService.repository
             .createQueryBuilder('user')
             .addSelect('user.password')
+            .addSelect('user.facebookUrl')
+            .addSelect('user.twitterUrl')
+            .addSelect('user.instagramUrl')
+            .addSelect('user.youtubeUrl')
+            .addSelect('user.tiktokUrl')
+            .addSelect('user.snapchatUrl')
             .leftJoin('user.userProgramSubscriptions', 'Subscriptions')
             .addSelect('Subscriptions.id')
             .addSelect('Subscriptions.paymentStatus')
@@ -182,7 +189,7 @@ export class AuthService {
         otp = speakeasy.totp({
             secret: process.env.optSecret,
             encoding: "base32",
-            digits: 6,
+            digits: 4,
             step: 60,
             window: 10
         });
@@ -309,4 +316,40 @@ export class AuthService {
             )
         }
     }
+
+    async resendOtp(body: ResendOtpDto) {
+        // Step 1: Check if the user exists
+        let user = await User
+            .createQueryBuilder('user')
+            .where('user.email = :email', { email: body.email })
+            .getOne();
+
+        if (!user) {
+            throw new HttpException('User with this email does not exist', HttpStatus.BAD_REQUEST);
+        }
+
+
+
+        // Step 3: Generate a new OTP
+        let otp = SUtils.generateOtp(4); // Optionally you can continue using speakeasy
+        otp = speakeasy.totp({
+            secret: process.env.optSecret,
+            encoding: "base32",
+            digits: 4,
+            step: 60,
+            window: 10
+        });
+
+        // Step 4: Update the user with the new OTP and request date
+        user.otp = otp;
+        user.otpRequestDate = new Date();
+
+        await User.save(user);
+
+        // Step 5: Send the new OTP to the user's email
+        await this.emailService.sendMail(user);
+
+        return { message: 'A new OTP has been sent to your email' };
+    }
+
 }

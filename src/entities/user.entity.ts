@@ -84,6 +84,30 @@ export class User extends OBaseEntity {
     @Column({ default: true })
     firstTime?: boolean;
 
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    facebookUrl?: string;
+
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    twitterUrl?: string;
+
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    instagramUrl?: string;
+
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    youtubeUrl?: string;
+
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    tiktokUrl?: string;
+
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    snapchatUrl?: string;
+
     @OneToMany(() => UserProgramSubscription, userProgramSubscriptions => userProgramSubscriptions.user)
     userProgramSubscriptions?: UserProgramSubscription[];
 
