@@ -18,8 +18,9 @@ module.exports = {
                 MAIL_HOST: "smtp.gmail.com",
                 SMTP_USERNAME: "husseinfayed86@gmail.com",
                 SMTP_PASSWORD: "kclf dmaa aaqf hmik",
-                SK_PAYTAPS: "Bearer sk_test_QOnyLXh4GkrbcNBM7jU8mE6R",
+                SK_PAYTAPS: "Bearer sk_live_kdhx6S9KfY0l5ZBL8aGCQRDy",
                 MERCHANT_ID: 30634006,
+                SK_STABILITY:"sk-dJ8MWrjUqcckn9uczBtzORkWswAAYVgIMjOGxboYEknqjCr2"
             },
         },
     ],

@@ -9,13 +9,15 @@ import { MulterModule } from '@nestjs/platform-express';
 // import { FileModule } from './modules/file/file.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 // import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
-import * as path from 'path';
+import { join } from 'path';
 import { MailModule } from './modules/mail/mail.module';
 import { PostingModule } from './modules/posting/posting.module';
 import { PromocodeModule } from './modules/promocode/promocode.module';
 import { PlansModule } from './modules/plans/plans.module';
 import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { ResponseInterceptor } from './shared/response.interceptor';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 
 
 const AllModules = [
@@ -68,6 +70,31 @@ const AllModules = [
       // envFilePath: path,
       // // load: [configuration],
       isGlobal: true,
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../images'),
+      serveRoot: '/img',
+      serveStaticOptions: {
+        index: false, // This prevents looking for index.html
+        fallthrough: false // This prevents falling through to the next middleware
+      }
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../videos'),
+      serveRoot: '/vid',
+      serveStaticOptions: {
+        index: false, // This prevents looking for index.html
+        fallthrough: false // This prevents falling through to the next middleware
+      }
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../banners'),
+      serveRoot: '/banner',
+      serveStaticOptions: {
+        index: false, // This prevents looking for index.html
+        fallthrough: false // This prevents falling through to the next middleware
+      }
     }),
 
 

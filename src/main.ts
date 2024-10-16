@@ -42,6 +42,15 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' })); // For JSON payloads
   app.use(urlencoded({ extended: true, limit: '50mb' })); // For form data
 
+/*   // Serve the images folder statically
+  app.useStaticAssets(join(__dirname, '..' ,'dist', 'images'), {
+    prefix: '/images/',  // Serve images under the /images path
+  });
+  // Serve the videos folder statically
+  app.useStaticAssets(join(__dirname, '..', 'dist', 'videos'), {
+    prefix: '/videos/',  // Serve images under the /images path
+  }); */
+
   app.use(morgan('dev'));
   app.useGlobalFilters(new ValidationExceptionFilter());
 

@@ -1,14 +1,30 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { AddPostDto } from '../../dtos/post.dto';
 import { PaymentStatus, UserProgramSubscription } from '../../entities/subscription.entity';
 import * as cron from 'node-cron';
 import { User } from '../../entities/user.entity';
+import {  Banner } from '../../entities/banner.entity'
+import * as fs from 'node:fs';
+import * as path from 'path';
+import * as FormData from 'form-data'
+import * as slugify from 'slugify'
+import * as sharp from 'sharp';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { join } from 'path';
+
+
 
 @Injectable()
 export class PostingService {
 
-    constructor() {
+    constructor(
+
+        @InjectRepository(Banner)
+        private readonly bannerRepository: Repository<Banner>
+
+    ) {
         // Schedule the cron job in the constructor
         this.scheduleCronJob();
     }
@@ -116,7 +132,8 @@ export class PostingService {
                 faceBookOptions: addPostDto.faceBookOptions,
                 instagramOptions: addPostDto.instagramOptions,
                 isVideo: addPostDto.isVideo,
-                youTubeOptions: addPostDto.youTubeOptions
+                youTubeOptions: addPostDto.youTubeOptions,
+                redditOptions: addPostDto.redditOptions
             };
 
             if (scheduleDate) {
@@ -270,4 +287,281 @@ export class PostingService {
             console.log('todayUsedPlanCounter reset to zero successfully.');
         });
     }
+
+    // This function generates a img from the text and returns the bufferd img
+    async generateImage(prompt: string): Promise<{ resizedFilePath: string, imgUrl: string }> {
+        try {
+            const formData = new FormData();
+            formData.append('prompt', prompt);
+            formData.append('output_format', 'png');
+            formData.append('model', 'sd3-large-turbo');
+            formData.append('aspect_ratio', '9:16'); // Keep aspect ratio in mind
+
+            const response = await axios.post(
+                'https://api.stability.ai/v2beta/stable-image/generate/sd3',
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.SK_STABILITY}`,
+                        ...formData.getHeaders(),
+                    },
+                    responseType: 'json',
+                }
+            );
+
+            console.log('Response status:', response.status);
+            console.log('Response data:', response.data);
+
+            if (response.status === 200) {
+                // Extract the Base64 image data from the response
+                const imageBase64 = response.data.image; // This is the Base64 string
+                const base64Data = imageBase64.replace(/^data:image\/png;base64,/, '');
+
+                // Prepare the image directory
+                const imagesDir = path.resolve(__dirname, '../../..', 'images');
+                if (!fs.existsSync(imagesDir)) {
+                    fs.mkdirSync(imagesDir, { recursive: true });
+                }
+
+                const filename = `generated_image_${Date.now()}.png`;
+                const filePath = path.resolve(imagesDir, filename);
+
+                // Write the decoded image to a file
+                fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+                console.log('Original image saved at:', filePath);
+
+                // Resize the image to 1024x576 (or any other dimensions you prefer)
+                const resizedFileName = `resized_image_${Date.now()}.png`;
+                const resizedFilePath = path.resolve(imagesDir, resizedFileName);
+
+                await sharp(filePath)
+                    .resize(576, 1024) // Resize as per your requirement
+                    .toFile(resizedFilePath); // Save the resized image
+
+                console.log('Resized image saved at:', resizedFilePath);
+
+                // Construct the public URL
+                const baseUrl = 'https://postbet.ae/img'; // Base URL for your images
+                const imgUrl = `${baseUrl}/${resizedFileName}`; // Correctly create the public URL
+
+                return {resizedFilePath , imgUrl}; // Return the public URL of the resized image
+            } else {
+                throw new HttpException(
+                    `Failed to generate image: ${response.statusText}`,
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        } catch (error) {
+            console.error('Error from stability:', error.response ? error.response.data : error.message);
+
+            throw new HttpException(
+                `Image generation failed: ${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+    // This function generates a video from the image and returns the generation ID
+    async generateVideo(imagePath: string): Promise<string> {
+        try {
+            const data = new FormData();
+            data.append('image', fs.readFileSync(imagePath), "image.png"); // Reading the image file
+            data.append('seed', 0);
+            data.append('cfg_scale', 1.8);
+            data.append('motion_bucket_id', 127);
+
+            const response = await axios.request({
+                url: 'https://api.stability.ai/v2beta/image-to-video',
+                method: 'post',
+                validateStatus: undefined,
+                headers: {
+                    authorization: `Bearer ${process.env.SK_STABILITY}`,
+                    ...data.getHeaders(),
+                },
+                data: data,
+            });
+
+            console.log(response)
+
+            if (response.status === 200) {
+                console.log("Generation ID:", response.data.id);
+                return response.data.id; // Return the generation ID for later retrieval
+            } else {
+                throw new HttpException(`Failed to generate video: ${response.statusText}`, HttpStatus.BAD_REQUEST);
+            }
+        } catch (error) {
+            throw new HttpException(`Video generation failed: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async waitForVideo(generationID: string): Promise<string> {
+        const url = `https://api.stability.ai/v2beta/image-to-video/result/${generationID}`;
+
+        while (true) {
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${process.env.SK_STABILITY}`,
+                    Accept: 'video/*', // or 'application/json' if expecting base64
+                },
+                responseType: 'arraybuffer',
+                validateStatus: undefined,
+            });
+
+            if (response.status === 202) {
+                console.log("Generation is still running, trying again in 10 seconds...");
+                await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait for 10 seconds
+            } else if (response.status === 200) {
+                console.log("Generation is complete!");
+
+                // Define the video directory
+                const videoDir = path.join(__dirname, '../../..', 'videos');
+
+                // Ensure the directory exists
+                if (!fs.existsSync(videoDir)) {
+                    fs.mkdirSync(videoDir, { recursive: true });
+                    console.log('Created videos directory:', videoDir);
+                }
+
+                // Create the video file path
+                const filename = `generated_video_${Date.now()}.mp4`
+                const videoPath = path.join(videoDir, filename);
+
+
+                // Construct the public URL
+                const baseUrl = 'https://postbet.ae/vid'; // Base URL for your images
+                const imgUrl = `${baseUrl}/${filename}`; // Correctly create the public URL
+
+                // Write the video file
+                fs.writeFileSync(videoPath, Buffer.from(response.data));
+                console.log('Video saved at:', videoPath);
+
+                return imgUrl; // Return the path of the saved video
+            } else {
+                throw new HttpException(`Error fetching video: ${response.status}: ${response.data.toString()}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    // Generate image first, then pass it to the video generator
+    async generateImageAndVideo(prompt: string): Promise<string> {
+        try {
+            // Step 1: Generate the image
+            const generatedImg = await this.generateImage(prompt);
+
+            // Step 2: Generate the video from the image
+            const videoId = await this.generateVideo(generatedImg.resizedFilePath);
+
+
+            // Return the paths for both the generated image and video
+            return videoId
+        } catch (error) {
+            throw new HttpException(`Failed to generate image and video: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Edit image
+    async removeBackground(imagePath: string): Promise<any> {
+        const payload = {
+            image: fs.createReadStream(imagePath),
+            output_format: 'webp',
+        };
+
+        const response = await axios.postForm(
+            'https://api.stability.ai/v2beta/stable-image/edit/remove-background',
+            axios.toFormData(payload, new FormData()),
+            {
+                validateStatus: undefined,
+                responseType: 'arraybuffer',
+                headers: {
+                    Authorization: `Bearer ${process.env.SK_STABILITY}`,
+                    Accept: 'image/*',
+                },
+            },
+        );
+
+        // Construct the public URL
+        const baseUrl = 'https://postbet.ae/img'; // Base URL for your images
+
+        if (response.status === 200) {
+            fs.writeFileSync(imagePath, Buffer.from(response.data)); // Overwrite the original image
+            const imgUrl = `${baseUrl}/${path.basename(imagePath)}`; // Correctly create the public URL
+            return { success: true, imgUrl };
+        } else {
+            throw new Error(`${response.status}: ${response.data.toString()}`);
+        }
+    }
+
+    async searchAndReplace(imagePath: string, prompt: string, searchPrompt: string): Promise<any> {
+        const payload = {
+            image: fs.createReadStream(imagePath),
+            prompt,
+            search_prompt: searchPrompt,
+            output_format: 'webp',
+        };
+
+        const response = await axios.postForm(
+            'https://api.stability.ai/v2beta/stable-image/edit/search-and-replace',
+            axios.toFormData(payload, new FormData()),
+            {
+                validateStatus: undefined,
+                responseType: 'arraybuffer',
+                headers: {
+                    Authorization: `Bearer ${process.env.SK_STABILITY}`,
+                    Accept: 'image/*',
+                },
+            },
+        );
+
+        // Construct the public URL
+        const baseUrl = 'https://postbet.ae/img'; // Base URL for your images
+
+        if (response.status === 200) {
+            fs.writeFileSync(imagePath, Buffer.from(response.data)); // Overwrite the original image
+            const imgUrl = `${baseUrl}/${path.basename(imagePath)}`; // Correctly create the public URL
+            return { success: true, imgUrl };
+        } else {
+            throw new Error(`${response.status}: ${response.data.toString()}`);
+        }
+    }
+
+    async addBanner(url: string) {
+        const banner = this.bannerRepository.create({ url });
+        return this.bannerRepository.save(banner);
+    }
+
+    async deleteBanner(id: number) {
+        // Find the banner by ID first
+        const banner = await this.bannerRepository.findOne({ where: { id } });
+        console.log(banner)
+        if (!banner) {
+            throw new NotFoundException(`Banner with ID ${id} not found`);
+        }
+
+        // Extract the filename from the URL (assuming the filename is stored in the banner's imgUrl)
+        const filename = banner.url.split('/').pop();
+        const imgPath = join(__dirname, '../../..', 'banners', filename);
+
+        // Delete the banner from the database
+        const result = await this.bannerRepository.delete(id);
+
+        if (result.affected === 0) {
+            throw new NotFoundException(`Banner with ID ${id} could not be deleted`);
+        }
+
+        // Check if the file exists, and delete it if it does
+        if (fs.existsSync(imgPath)) {
+            fs.unlinkSync(imgPath);
+        } else {
+            console.log(`File not found: ${imgPath}`);
+        }
+
+        return { message: 'Banner and image file deleted successfully' };
+    }
+
+    async getAllBanners () : Promise <any>{
+        const banners = await Banner.find()
+
+        return banners
+    }
+
+    
 }

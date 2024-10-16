@@ -12,6 +12,17 @@ class FacebookOptions {
     @ApiProperty({ required: false })
     title?: string;
 }
+class RedditOptions {
+
+    @ApiProperty({ required: true })
+    subreddit: string;
+
+    @ApiProperty({ required: true })
+    title: string;
+
+    @ApiProperty({ required: false })
+    link?: string;
+}
 
 class InstagramOptions {
 
@@ -101,6 +112,10 @@ export class AddPostDto {
     @ApiProperty({ required: false })
     @IsOptional()
     youTubeOptions?: YouTubeOptions;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    redditOptions?: RedditOptions;
 
     @ApiProperty()
     isVideo: boolean

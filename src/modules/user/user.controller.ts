@@ -63,6 +63,18 @@ export class UserController {
     // });
     return "Delete postbet account and associated ayrshare account success";
   }
+
+  @UseGuards(AdminGuard)
+  @Post('ban/:id')
+  async ban(@Param('id') id: number) {
+    return await this.userService.banUser(id)
+  }
+
+  @UseGuards(AdminGuard)
+  @Post('unban/:id')
+  async unban(@Param('id') id: number) {
+    return await this.userService.unBanUser(id)
+  }
 }
 
 ///when delete user create its account on ayrshare

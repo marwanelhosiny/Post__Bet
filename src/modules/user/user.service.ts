@@ -188,4 +188,35 @@ export class UserService extends AbstractService<User> {
       throw new HttpException(errorMessage, statusCode);
     }
   }
+
+  async banUser(id: number): Promise<any> {
+    // First, find the user
+    const existsUser = await this.userRepo.findOne({ where: { id } });
+
+    if (!existsUser) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Update the user's suspended status
+    await this.userRepo.update(id, { suspended: true });
+
+
+    return {message:"user banned successfully"}
+  }
+
+  async unBanUser(id: number): Promise<any> {
+    // First, find the user
+    const existsUser = await this.userRepo.findOne({ where: { id } });
+
+    if (!existsUser) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Update the user's suspended status
+    await this.userRepo.update(id, { suspended: false });
+
+
+    return {message:"user unbanned"}
+  }
+
 }

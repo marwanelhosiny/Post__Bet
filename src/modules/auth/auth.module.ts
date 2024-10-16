@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { jwtSecrets } from '../../shared/constants';
 import { MailModule } from '../mail/mail.module';
 import { PostingService } from '../posting/posting.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Banner } from 'src/entities/banner.entity';
 
 @Module({
   imports: [
@@ -18,7 +20,8 @@ import { PostingService } from '../posting/posting.service';
     }),
     // import modules
     UserModule,
-    MailModule
+    MailModule,
+    TypeOrmModule.forFeature([Banner])
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, PostingService],
